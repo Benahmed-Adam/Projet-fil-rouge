@@ -3,75 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gérez vos contacts et vos invitations de groupe">
     <title>Contacts</title>
 </head>
 <body>
     <header>
-        <a href="/conversation.html">Vers conversation</a>
+        <nav>
+            <a href="/conversation.html">Vers conversation</a>
+        </nav>
     </header>
-    <div>
-        <h2>Rechercher un contact</h2>
-        <input type="text">
-        <button>Rechercher</button>
-    </div>
-    <div>
-        <h3>Liste des invitations reçues</h3>
-        <ul>
-            <li>
-                <div>
-                    <div>Par : <strong>Bob</strong></div>
-                    <div>Groupe : <strong>Aaaa</strong></div>
-                    <button>Accepter</button>
-                    <button>Refuser</button>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <div>Par : <strong>Bobby</strong></div>
-                    <div>Groupe : <strong>AAaaa</strong></div>
-                    <button>Accepter</button>
-                    <button>Refuser</button>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <div>Par : <strong>Bobbbbbbby</strong></div>
-                    <div>Groupe : <strong>OIAJOAJSOJAOJS</strong></div>
-                    <button>Accepter</button>
-                    <button>Refuser</button>
-                </div>
-            </li>
-        </ul>
-        <h3>Liste des invitations envoyé</h3>
-        <ul>
-            <li>
-                <div>
-                    <div>Pour : <strong>Bob</strong></div>
-                    <div>Groupe : <strong>Aaaddda</strong></div>
-                    <button>Supprimer l'invitation</button>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <div>Pour : <strong>Bobby</strong></div>
-                    <div>Groupe : <strong>Aaaasaasza</strong></div>
-                    <button>Supprimer l'invitation</button>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <div>Pour : <strong>Bobbbbby</strong></div>
-                    <div>Groupe : <strong>Aaasziuhazhiuzahiuaa</strong></div>
-                    <button>Supprimer l'invitation</button>
-                </div>
-            </li>
-        </ul>
-        <h3>Liste des contacts</h3>
-        <ul>
-            <li>Bob</li>
-            <li>Bobby</li>
-            <li>Bobbbbybybubybd</li>
-        </ul>
-    </div>
+
+    <main>
+        <h1>Contacts</h1>
+
+        <section>
+            <h2>Rechercher un contact</h2>
+            <form action="/contacts/rechercher" method="get" role="search">
+                <label for="recherche-contact">Nom ou email du contact</label>
+                <input type="search" id="recherche-contact" name="q">
+                <button type="submit">Rechercher</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Liste des invitations reçues</h2>
+            <ul>
+                <li>
+                    <article>
+                        <p>Par : <strong>Bob</strong></p>
+                        <p>Groupe : <strong>Aaaa</strong></p>
+                        <button type="button">Accepter</button>
+                        <button type="button">Refuser</button>
+                    </article>
+                </li>
+                <li>
+                    <article>
+                        <p>Par : <strong>Bobby</strong></p>
+                        <p>Groupe : <strong>AAaaa</strong></p>
+                        <button type="button">Accepter</button>
+                        <button type="button">Refuser</button>
+                    </article>
+                </li>
+                <li>
+                    <article>
+                        <p>Par : <strong>Bobbbbbbby</strong></p>
+                        <p>Groupe : <strong>OIAJOAJSOJAOJS</strong></p>
+                        <button type="button">Accepter</button>
+                        <button type="button">Refuser</button>
+                    </article>
+                </li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Liste des invitations envoyées</h2>
+            <ul>
+                <li>
+                    <article>
+                        <p>Pour : <strong>Bob</strong></p>
+                        <p>Groupe : <strong>Aaaddda</strong></p>
+                        <button type="button">Supprimer l'invitation</button>
+                    </article>
+                </li>
+                <li>
+                    <article>
+                        <p>Pour : <strong>Bobby</strong></p>
+                        <p>Groupe : <strong>Aaaasaasza</strong></p>
+                        <button type="button">Supprimer l'invitation</button>
+                    </article>
+                </li>
+                <li>
+                    <article>
+                        <p>Pour : <strong>Bobbbbby</strong></p>
+                        <p>Groupe : <strong>Aaasziuhazhiuzahiuaa</strong></p>
+                        <button type="button">Supprimer l'invitation</button>
+                    </article>
+                </li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Liste des contacts</h2>
+            <ul>
+                <li>Bob</li>
+                <li>Bobby</li>
+                <li>Bobbbbybybubybd</li>
+            </ul>
+        </section>
+    </main>
 </body>
 </html>

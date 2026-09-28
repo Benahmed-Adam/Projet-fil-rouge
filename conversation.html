@@ -3,62 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Liste des conversations et messages échangés">
     <title>Conversationner</title>
 </head>
 <body>
     <header>
-        <a href="contact.html">Vers les contacts</a>
-        <a href="parametre.html">Vers les paramètres</a>
-        <button id="nouvelle_conversation">Créer une nouvelle conversation</button>
-        <div>
-            <h3>Liste des conversations</h3>
-            <ul>
-                <li>Aaaa</li>
-                <li>Bbbb</li>
-                <li>Cccc</li>
-            </ul>
-        </div>
+        <nav>
+            <a href="contact.html">Vers les contacts</a>
+            <a href="parametre.html">Vers les paramètres</a>
+        </nav>
     </header>
-    <div>
-        <h2>Liste des messages de la conversation : Aaaa</h2>
-        <ul>
-            <li>
-                <div id="message">
-                    <h4>Envoyé par : Bob</h4>
-                    <strong>Coucou</strong>
-                    <code>à 10:11 le 21/09/2026</code>
-                </div>
-            </li>
-            <li>
-                <div id="message">
-                    <h4>Envoyé par : Bobby</h4>
-                    <strong>Coucou bob</strong>
-                    <code>à 10:12 le 21/09/2026</code>
-                </div>
-            </li>
-            <li>
-                <div id="message">
-                    <h4>Envoyé par : Bob</h4>
-                    <strong>Coucou Bobby</strong>
-                    <code>à 10:13 le 21/09/2026</code>
-                </div>
-            </li>
-            <li>
-                <div id="message">
-                    <h4>Envoyé par : Bobbybby</h4>
-                    <strong>Coucouuuuuuuuu</strong>
-                    <code>à 10:14 le 21/09/2026</code>
-                </div>
-            </li>
-            <li>
-                <div id="message">
-                    <h4>Envoyé par : Aaaaaaaaaa</h4>
-                    <strong>Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</strong>
-                    <code>à 10:15 le 21/09/2026</code>
-                </div>
-            </li>
-        </ul>
-        <div>Le message : <input type="text"> <button>Envoyer le message</button></div>
-    </div>
+
+    <main>
+        <aside>
+            <h2>Liste des conversations</h2>
+            <button type="button" id="nouvelle_conversation">Créer une nouvelle conversation</button>
+            <nav>
+                <ul>
+                    <li><a>Aaaa</a></li>
+                    <li><a>Bbbb</a></li>
+                    <li><a>Cccc</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <section>
+            <h1>Messages de la conversation : Aaaa</h1>
+            <ul>
+                <li>
+                    <article class="message">
+                        <header>
+                            <h2>Envoyé par : Bob</h2>
+                            <p><time datetime="2026-09-21T10:11">à 10:11 le 21/09/2026</time></p>
+                        </header>
+                        <p>Coucou</p>
+                    </article>
+                </li>
+                <li>
+                    <article class="message">
+                        <header>
+                            <h2>Envoyé par : Bobby</h2>
+                            <p><time datetime="2026-09-21T10:12">à 10:12 le 21/09/2026</time></p>
+                        </header>
+                        <p>Coucou bob</p>
+                    </article>
+                </li>
+                <li>
+                    <article class="message">
+                        <header>
+                            <h2>Envoyé par : Bob</h2>
+                            <p><time datetime="2026-09-21T10:13">à 10:13 le 21/09/2026</time></p>
+                        </header>
+                        <p>Coucou Bobby</p>
+                    </article>
+                </li>
+                <li>
+                    <article class="message">
+                        <header>
+                            <h2>Envoyé par : Bobbybby</h2>
+                            <p><time datetime="2026-09-21T10:14">à 10:14 le 21/09/2026</time></p>
+                        </header>
+                        <p>Coucouuuuuuuuu</p>
+                    </article>
+                </li>
+                <li>
+                    <article class="message">
+                        <header>
+                            <h2>Envoyé par : Aaaaaaaaaa</h2>
+                            <p><time datetime="2026-09-21T10:15">à 10:15 le 21/09/2026</time></p>
+                        </header>
+                        <p>Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+                    </article>
+                </li>
+            </ul>
+
+            <form action="/new_message" method="post">
+                <label for="nouveau-message">Le message :</label>
+                <input type="text" id="nouveau-message" name="message" required>
+                <button type="submit">Envoyer le message</button>
+            </form>
+        </section>
+    </main>
 </body>
 </html>
