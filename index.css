@@ -18,9 +18,20 @@ body>header p {
 #main-index {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    align-items: start;
+    align-items: stretch;
     gap: 20px;
     margin-top: 20px;
+}
+
+#main-index section {
+    display: flex;
+    flex-direction: column;
+}
+
+#main-index form {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 #main-index form>div {
@@ -29,15 +40,16 @@ body>header p {
     gap: 3px;
 }
 
+#main-index button {
+    width: 100%;
+    margin-top: auto;
+}
+
 label[for="stay_connected"] {
     grid-row: 1;
     grid-column: 2;
     margin: 0;
     font-weight: normal;
-}
-
-#main-index button {
-    width: 100%;
 }
 
 @media (max-width: 850px) {
