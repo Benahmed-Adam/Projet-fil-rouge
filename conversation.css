@@ -1,0 +1,130 @@
+main {
+	display: grid;
+	grid-template-columns: 260px 1fr;
+	align-items: stretch;
+	gap: 22px;
+	width: 90%;
+	margin-top: 28px;
+}
+
+main>aside {
+	padding: 22px;
+	background: #ffffff;
+	border: 1px solid #d6d6d6;
+	overflow-y: scroll;
+}
+
+main>aside button {
+	width: 100%;
+	margin-bottom: 18px;
+}
+
+main>aside ul {
+	display: grid;
+	gap: 6px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+main>aside li a {
+	display: block;
+	padding: 11px 12px;
+	color: #333333;
+}
+
+main>aside li:first-child a,
+main>aside li a:hover {
+	color: #111111;
+	background: #e8e8e8;
+	text-decoration: none;
+}
+
+main>section {
+	display: flex;
+	flex-direction: column;
+	padding: 24px;
+}
+
+main>section h1 {
+	margin-bottom: 20px;
+	font-size: 25px;
+}
+
+main>section>ul {
+	display: grid;
+	gap: 12px;
+	margin: 0 0 22px;
+	padding: 0;
+	list-style: none;
+}
+
+article.message {
+	padding: 14px 16px;
+	overflow-wrap: break-word;
+}
+
+article.message header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 4px 16px;
+	margin-bottom: 6px;
+}
+
+article.message h2 {
+	margin: 0;
+	font-size: 16px;
+}
+
+article.message header p {
+	margin: 0;
+	color: #666666;
+	font-size: 14px;
+}
+
+article.message>p {
+	margin: 0;
+}
+
+main>section>form {
+	grid-template-columns: 1fr auto;
+	align-items: end;
+	gap: 10px 12px;
+	margin-top: auto;
+	padding-top: 18px;
+	border-top: 1px solid #d6d6d6;
+}
+
+main>section>form label {
+	grid-column: 1 / 3;
+	margin-bottom: -8px;
+}
+
+@media (max-width: 760px) {
+	main {
+		grid-template-columns: 1fr;
+		width: 92%;
+		gap: 16px;
+		margin-top: 20px;
+	}
+
+	main>aside {
+		padding: 18px;
+	}
+
+	main>aside ul {
+		grid-template-columns: 1fr 1fr 1fr;
+	}
+}
+
+@media (max-width: 500px) {
+	main>section>form {
+		grid-template-columns: 1fr;
+	}
+
+	main>section>form label {
+		grid-column: 1;
+	}
+}
