@@ -1,7 +1,7 @@
 import { supabase, isSessionActive } from './supabaseClient.js';
 
 if ((await isSessionActive())) {
-    //window.location.href= "contact.html";
+    window.location.href= "conversation.html";
 }
 
 document.getElementById("btn-connexion").addEventListener('click', async (e) => {
@@ -24,7 +24,7 @@ document.getElementById("btn-connexion").addEventListener('click', async (e) => 
     }
 
     console.log("Connecté :", data);
-    // window.location.href = "contact.html";
+    window.location.href = "conversation.html";
 });
 
 document.getElementById("btn-inscription").addEventListener('click', async (e) => {
