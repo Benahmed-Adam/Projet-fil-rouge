@@ -71,7 +71,7 @@ section {
     padding: 24px;
 }
 
-form {
+.form {
     display: grid;
     gap: 16px;
 }

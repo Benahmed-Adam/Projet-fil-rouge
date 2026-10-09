@@ -19,7 +19,7 @@
     <main id="main-index">
         <section>
             <h2>Connexion</h2>
-            <form action="/connection" method="post">
+            <div class="form" id="form-connexion">
                 <div>
                     <label for="email-connexion">Email</label>
                     <input type="email" name="email" id="email-connexion" autocomplete="email" required>
@@ -29,22 +29,14 @@
                     <input type="password" name="password" id="password-connexion" autocomplete="current-password"
                         required>
                 </div>
-                <div>
-                    <label for="password-connexion-confirm">Confirmation du mot de passe</label>
-                    <input type="password" name="password-confirm" id="password-connexion-confirm"
-                        autocomplete="current-password" required>
-                </div>
-                <div>
-                    <input type="checkbox" name="stay_connected" id="stay_connected">
-                    <label for="stay_connected">Rester connecté</label>
-                </div>
-                <button type="submit">Connexion</button>
-            </form>
+                <button type="button" id="btn-connexion">Connexion</button>
+                <h3 id="connexion-error"></h3>
+            </div>
         </section>
 
         <section>
             <h2>Inscription</h2>
-            <form action="/inscription" method="post">
+            <div class="form" id="form-inscription">
                 <div>
                     <label for="email-inscription">Email</label>
                     <input type="email" name="email" id="email-inscription" autocomplete="email" required>
@@ -54,21 +46,29 @@
                     <input type="password" name="password" id="password-inscription" autocomplete="new-password"
                         required>
                 </div>
-                <button type="submit">Inscription</button>
-            </form>
+                <div>
+                    <label for="password-inscription-confirm">Confirmation du mot de passe</label>
+                    <input type="password" name="password-confirm" id="password-inscription-confirm"
+                        autocomplete="current-password" required>
+                </div>
+                <button type="button" id="btn-inscription">Inscription</button>
+                <h3 id="inscription-error"></h3>
+            </div>
         </section>
 
         <section>
             <h2>Récupération du mot de passe</h2>
-            <form action="/recover_password" method="post">
+            <div class="form" id="form-recuperation">
                 <div>
                     <label for="email-recuperation">Email</label>
                     <input type="email" name="email" id="email-recuperation" autocomplete="email" required>
                 </div>
-                <button type="submit">Récupérer le mot de passe</button>
-            </form>
+                <button type="button" id="btn-recuperation">Récupérer le mot de passe</button>
+                <h3 id="recuperation-error"></h3>
+            </div>
         </section>
     </main>
+    <script type="module" src="js/index.js"></script>
 </body>
 
 </html>

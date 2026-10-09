@@ -22,11 +22,11 @@
 
         <section>
             <h2>Rechercher un contact</h2>
-            <form action="/contacts/rechercher" method="get" role="search">
+            <div class="form" id="form-recherche-contact" role="search">
                 <label for="recherche-contact">Nom ou email du contact</label>
                 <input type="search" id="recherche-contact" name="q">
-                <button type="submit">Rechercher</button>
-            </form>
+                <button type="button" id="btn-rechercher-contact">Rechercher</button>
+            </div>
         </section>
 
         <section>
@@ -95,6 +95,7 @@
             </ul>
         </section>
     </main>
+    <script type="module" src="js/contact.js"></script>
 </body>
 
 </html>

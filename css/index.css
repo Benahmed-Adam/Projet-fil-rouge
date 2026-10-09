@@ -28,13 +28,13 @@ body>header p {
     flex-direction: column;
 }
 
-#main-index form {
+#main-index .form {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
 }
 
-#main-index form>div {
+#main-index .form>div {
     display: grid;
     grid-template-columns: 1fr;
     gap: 3px;

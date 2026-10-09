@@ -81,13 +81,14 @@
                 </li>
             </ul>
 
-            <form action="/new_message" method="post">
+            <div class="form" id="form-nouveau-message">
                 <label for="nouveau-message">Le message :</label>
                 <input type="text" id="nouveau-message" name="message" required>
-                <button type="submit">Envoyer le message</button>
-            </form>
+                <button type="button" id="btn-envoyer-message">Envoyer le message</button>
+            </div>
         </section>
     </main>
+    <script type="module" src="js/conversation.js"></script>
 </body>
 
 </html>
