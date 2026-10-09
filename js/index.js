@@ -1,80 +1,97 @@
 import { supabase, isSessionActive } from './supabaseClient.js';
+import { setMessage, setLoading } from './ui.js';
 
-if ((await isSessionActive())) {
-    window.location.href= "conversation.html";
+if (await isSessionActive()) {
+    window.location.href = "conversation.html";
 }
 
-document.getElementById("btn-connexion").addEventListener('click', async (e) => {
+const URL_CONVERSATION = new URL("conversation.html", window.location.href).href;
+const URL_REINITIALISATION = new URL("reset-password.html", window.location.href).href;
+
+document.getElementById("form-connexion").addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const email = document.getElementById("email-connexion").value;
+    const email = document.getElementById("email-connexion").value.trim();
     const password = document.getElementById("password-connexion").value;
-    const connexionError = document.getElementById("connexion-error");
+    const message = document.getElementById("connexion-message");
+    const bouton = document.getElementById("btn-connexion");
 
-    connexionError.textContent = "";
+    setMessage(message, "", null);
+    setLoading(bouton, true, "Connexion en cours…");
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password
-    });
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-        connexionError.textContent = error.message;
+        setMessage(message, error, "error");
+        setLoading(bouton, false);
         return;
     }
 
-    console.log("Connecté :", data);
     window.location.href = "conversation.html";
 });
 
-document.getElementById("btn-inscription").addEventListener('click', async (e) => {
+document.getElementById("form-inscription").addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const email = document.getElementById("email-inscription").value;
+    const email = document.getElementById("email-inscription").value.trim();
     const password = document.getElementById("password-inscription").value;
     const passwordConfirm = document.getElementById("password-inscription-confirm").value;
-    const inscriptionError = document.getElementById("inscription-error");
+    const message = document.getElementById("inscription-message");
+    const bouton = document.getElementById("btn-inscription");
 
-    inscriptionError.textContent = "";
+    setMessage(message, "", null);
 
     if (password !== passwordConfirm) {
-        inscriptionError.textContent = "Les deux mots de passe ne correspondent pas !";
+        setMessage(message, "Les deux mots de passe ne correspondent pas.", "error");
         return;
     }
+
+    setLoading(bouton, true, "Création du compte…");
 
     const { data, error } = await supabase.auth.signUp({
-        email: email,
-        password: password
+        email,
+        password,
+        options: { emailRedirectTo: URL_CONVERSATION },
     });
 
+    setLoading(bouton, false);
+
     if (error) {
-        inscriptionError.textContent = error.message;
+        setMessage(message, error, "error");
         return;
     }
 
-    console.log("Compte créé :", data);
-    inscriptionError.textContent = `Compte créé ! Un email de confirmation vous a été envoyé à l'adresse : ${email}`;
+    if (data.session) {
+        setMessage(message, "Compte créé, vous êtes connecté.", "success");
+        window.location.href = "conversation.html";
+        return;
+    }
+
+    setMessage(message, `Compte créé ! Un email de confirmation vous a été envoyé à ${email}.`, "success");
 });
 
-document.getElementById("btn-recuperation").addEventListener('click', async (e) => {
+const formRecuperation = document.getElementById("form-recuperation");
+
+formRecuperation.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const email = document.getElementById("email-recuperation").value;
-    const recuperationError = document.getElementById("recuperation-error");
+    const email = document.getElementById("email-recuperation").value.trim();
+    const message = document.getElementById("recuperation-message");
+    const bouton = document.getElementById("btn-recuperation");
 
-    recuperationError.textContent = "";
+    setMessage(message, "", null);
+    setLoading(bouton, true, "Envoi en cours…");
 
-    if (!email) {
-        recuperationError.textContent = "Veuillez entrer votre adresse email.";
-        return;
-    }
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: URL_REINITIALISATION,
+    });
 
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+    setLoading(bouton, false);
 
     if (error) {
-        recuperationError.textContent = error.message;
+        setMessage(message, error, "error");
         return;
     }
 
-    recuperationError.textContent = `Un e-mail de réinitialisation a été envoyé à : ${email}`;
+    setMessage(message, `Un email de réinitialisation a été envoyé à ${email}.`, "success");
 });
