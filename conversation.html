@@ -21,7 +21,6 @@
     <main>
         <aside>
             <h2>Liste des conversations</h2>
-            <button type="button" id="nouvelle_conversation">Créer une nouvelle conversation</button>
             <nav>
                 <ul>
                     <li><a>Aaaa</a></li>
@@ -29,6 +28,12 @@
                     <li><a>Cccc</a></li>
                 </ul>
             </nav>
+            <div class="nouvelle-conversation">
+                <h3>Créer une nouvelle conversation</h3>
+                <input type="text" id="nouvelle_conversation_nom" name="salon" placeholder="Ex. : Salon de qualité"
+                    maxlength="60" autocomplete="off">
+                <button type="button" id="nouvelle_conversation">Créer</button>
+            </div>
         </aside>
 
         <section>
@@ -83,8 +88,19 @@
 
             <div class="form" id="form-nouveau-message">
                 <label for="nouveau-message">Le message :</label>
-                <input type="text" id="nouveau-message" name="message" required>
+                <input type="text" id="nouveau-message" name="message">
                 <button type="button" id="btn-envoyer-message">Envoyer le message</button>
+
+                <div class="champ-image">
+                    <label for="image-message">Ajouter une image :</label>
+                    <input type="file" id="image-message" name="image" accept="image/*">
+                    <button type="button" id="btn-retirer-image" hidden>Retirer l'image</button>
+                </div>
+
+                <figure id="apercu-image" hidden>
+                    <img id="apercu-image-visuel" src="" alt="Aperçu de l'image sélectionnée">
+                    <figcaption id="apercu-image-nom"></figcaption>
+                </figure>
             </div>
         </section>
     </main>
