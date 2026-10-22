@@ -1,4 +1,3 @@
-/* La page occupe exactement l'écran : seules les listes défilent */
 body {
 	display: flex;
 	flex-direction: column;
@@ -168,8 +167,68 @@ article.message header p {
 	font-size: 14px;
 }
 
-article.message>p {
-	margin: 0;
+article.message {
+	font-weight: 400;
+}
+
+.contenu-message> :first-child {
+	margin-top: 0;
+}
+
+.contenu-message> :last-child {
+	margin-bottom: 0;
+}
+
+.contenu-message p,
+.contenu-message ul,
+.contenu-message ol,
+.contenu-message blockquote,
+.contenu-message pre {
+	margin: 6px 0;
+}
+
+.contenu-message h1,
+.contenu-message h2,
+.contenu-message h3 {
+	margin: 8px 0 4px;
+	font-size: 18px;
+}
+
+.contenu-message a {
+	text-decoration: underline;
+}
+
+.contenu-message blockquote {
+	padding-left: 12px;
+	color: #555555;
+	border-left: 3px solid #cccccc;
+}
+
+.contenu-message code {
+	padding: 1px 5px;
+	font-family: Consolas, "Courier New", monospace;
+	font-size: 14px;
+	background: #f0f0f0;
+}
+
+.contenu-message pre {
+	padding: 10px 12px;
+	overflow-x: auto;
+	background: #f0f0f0;
+}
+
+.contenu-message pre code {
+	padding: 0;
+}
+
+.contenu-message table {
+	border-collapse: collapse;
+}
+
+.contenu-message th,
+.contenu-message td {
+	padding: 4px 8px;
+	border: 1px solid #d6d6d6;
 }
 
 main>section>.form {
@@ -184,6 +243,13 @@ main>section>.form {
 main>section>.form label {
 	grid-column: 1 / 3;
 	margin-bottom: -8px;
+}
+
+main>section>.form textarea {
+	min-height: 44px;
+	max-height: 200px;
+	resize: vertical;
+	line-height: 1.4;
 }
 
 main>section>.form .champ-image {
@@ -226,7 +292,6 @@ main>section>.form #apercu-image figcaption {
 	font-size: 14px;
 }
 
-/* Affichage d'une image reçue dans un message */
 article.message img {
 	display: block;
 	max-width: 100%;
@@ -235,7 +300,6 @@ article.message img {
 	border: 1px solid #d6d6d6;
 }
 
-/* Sur téléphone les deux blocs sont empilés : la page redéfile, les listes gardent une hauteur max */
 @media (max-width: 760px) {
 	body {
 		height: auto;

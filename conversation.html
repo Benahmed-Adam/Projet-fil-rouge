@@ -44,8 +44,8 @@
 
             <form class="form" id="form-nouveau-message">
                 <label for="nouveau-message">Le message :</label>
-                <input type="text" id="nouveau-message" name="message" placeholder="Écrivez votre message…"
-                    maxlength="2000" autocomplete="off">
+                <textarea id="nouveau-message" name="message" rows="2" maxlength="2000" autocomplete="off"
+                    placeholder="Écrivez votre message… (Maj + Entrée pour aller à la ligne)"></textarea>
                 <button type="submit" id="btn-envoyer-message">Envoyer le message</button>
 
                 <div class="champ-image">
@@ -63,6 +63,8 @@
             </form>
         </section>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/marked@17.0.6/lib/marked.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.10/dist/purify.min.js"></script>
     <script type="module" src="js/conversation.js"></script>
 </body>
 

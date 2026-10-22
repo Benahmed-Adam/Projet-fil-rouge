@@ -31,6 +31,18 @@ let abonnementMessages = null;
 const messagesAffiches = new Set();
 const pseudos = new Map();
 
+DOMPurify.addHook("afterSanitizeAttributes", (node) => {
+    if (node.tagName === "A") {
+        node.setAttribute("target", "_blank");
+        node.setAttribute("rel", "noopener noreferrer");
+    }
+});
+
+function markdownEnHtml(texte) {
+    const html = marked.parse(texte, { gfm: true, breaks: true });
+    return DOMPurify.sanitize(html, { FORBID_TAGS: ["img"] });
+}
+
 function renderConversations() {
     conversationsList.replaceChildren();
 
@@ -72,8 +84,9 @@ function afficherMessage(message) {
     p.append(time);
     header.append(auteur, p);
 
-    const contenu = document.createElement("p");
-    contenu.textContent = message.content ?? "";
+    const contenu = document.createElement("div");
+    contenu.className = "contenu-message";
+    contenu.innerHTML = markdownEnHtml(message.content ?? "");
 
     article.append(header, contenu);
     li.append(article);
@@ -264,5 +277,13 @@ if (!(await isSessionActive()) || !user) {
     formNouvelleConversation.addEventListener("submit", creerConversation);
     conversationsList.addEventListener("click", onConversationClick);
     formMessage.addEventListener("submit", envoyerMessage);
+    // Entrée envoie, Maj + Entrée va à la ligne (isComposing : ne pas couper une saisie IME en cours)
+    champMessage.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
+            e.preventDefault();
+            // bouton désactivé = envoi déjà en cours, évite un double envoi
+            if (!boutonMessage.disabled) formMessage.requestSubmit();
+        }
+    });
     await loadConversations();
 }
