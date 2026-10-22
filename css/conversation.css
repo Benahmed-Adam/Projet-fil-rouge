@@ -171,6 +171,12 @@ article.message {
 	font-weight: 400;
 }
 
+.contenu-message {
+	position: relative;
+	overflow: auto;
+	contain: paint;
+}
+
 .contenu-message> :first-child {
 	margin-top: 0;
 }
@@ -295,6 +301,7 @@ main>section>.form #apercu-image figcaption {
 article.message img {
 	display: block;
 	max-width: 100%;
+	max-height: 320px;
 	height: auto;
 	margin-top: 8px;
 	border: 1px solid #d6d6d6;

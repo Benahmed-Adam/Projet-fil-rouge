@@ -25,22 +25,55 @@ const apercuImageNom = document.getElementById("apercu-image-nom");
 
 const MESSAGES_LIMITE = 100;
 
+const EXTENSIONS_IMAGE = { "image/png": "png", "image/jpeg": "jpg", "image/gif": "gif", "image/webp": "webp" };
+const CHEMIN_IMAGE_REGEX = /^[0-9a-f-]{36}\/[0-9a-f-]{36}\.(png|jpg|gif|webp)$/;
+
+const urlsSignees = new Map();
+let urlApercu = null;
+
 let conversations = [];
 let currentChannelId = null;
 let abonnementMessages = null;
 const messagesAffiches = new Set();
 const pseudos = new Map();
 
-DOMPurify.addHook("afterSanitizeAttributes", (node) => {
-    if (node.tagName === "A") {
-        node.setAttribute("target", "_blank");
-        node.setAttribute("rel", "noopener noreferrer");
+async function urlSignee(chemin) {
+    if (!urlsSignees.has(chemin)) {
+        const { data, error } = await supabase.storage.from("message-images").createSignedUrl(chemin, 3600);
+        if (error) return null;
+        urlsSignees.set(chemin, data.signedUrl);
     }
-});
+    return urlsSignees.get(chemin);
+}
+
+async function afficherImages(contenu) {
+    for (const img of contenu.querySelectorAll("img[data-chemin]")) {
+        const url = await urlSignee(img.dataset.chemin);
+        if (url) {
+            img.src = url;
+        } else {
+            img.replaceWith("[image indisponible]");
+        }
+    }
+}
 
 function markdownEnHtml(texte) {
     const html = marked.parse(texte, { gfm: true, breaks: true });
-    return DOMPurify.sanitize(html, { FORBID_TAGS: ["img"] });
+    return DOMPurify.sanitize(html, { FORBID_TAGS: ["style", "form"] });
+}
+
+function construireContenu(texte) {
+    const doc = new DOMParser().parseFromString(markdownEnHtml(texte), "text/html");
+
+    for (const img of doc.querySelectorAll("img")) {
+        const src = img.getAttribute("src") ?? "";
+        if (CHEMIN_IMAGE_REGEX.test(src)) {
+            img.dataset.chemin = src;
+            img.removeAttribute("src");
+        }
+    }
+
+    return [...doc.body.childNodes];
 }
 
 function renderConversations() {
@@ -86,7 +119,13 @@ function afficherMessage(message) {
 
     const contenu = document.createElement("div");
     contenu.className = "contenu-message";
-    contenu.innerHTML = markdownEnHtml(message.content ?? "");
+    contenu.append(...construireContenu(message.content ?? ""));
+    for (const img of contenu.querySelectorAll("img")) {
+        img.addEventListener("load", () => {
+            messagesList.scrollTop = messagesList.scrollHeight;
+        });
+    }
+    afficherImages(contenu);
 
     article.append(header, contenu);
     li.append(article);
@@ -158,10 +197,50 @@ async function selectConversation(channelId) {
     await loadMessages(channel.id);
 }
 
+function verifierImage(fichier) {
+    if (!EXTENSIONS_IMAGE[fichier.type]) return "Format non accepté : PNG, JPEG, GIF ou WebP uniquement.";
+    if (fichier.size > (5 * 1024 * 1024)) return "L'image dépasse 5 Mo.";
+    return null;
+}
+
+function retirerImage() {
+    champImage.value = "";
+    if (urlApercu) URL.revokeObjectURL(urlApercu);
+    urlApercu = null;
+    apercuImageVisuel.src = "";
+    apercuImageNom.textContent = "";
+    apercuImage.hidden = true;
+    boutonRetirerImage.hidden = true;
+}
+
+function onImageChoisie() {
+    const fichier = champImage.files[0];
+    setMessage(messageFormMessage, "", null);
+    if (!fichier) {
+        retirerImage();
+        return;
+    }
+
+    const erreur = verifierImage(fichier);
+    if (erreur) {
+        retirerImage();
+        setMessage(messageFormMessage, erreur, "error");
+        return;
+    }
+
+    if (urlApercu) URL.revokeObjectURL(urlApercu);
+    urlApercu = URL.createObjectURL(fichier);
+    apercuImageVisuel.src = urlApercu;
+    apercuImageNom.textContent = fichier.name;
+    apercuImage.hidden = false;
+    boutonRetirerImage.hidden = false;
+}
+
 async function envoyerMessage(e) {
     e.preventDefault();
 
-    const content = champMessage.value.trim();
+    const texte = champMessage.value.trim();
+    const fichier = champImage.files[0];
     setMessage(messageFormMessage, "", null);
 
     if (!currentChannelId) {
@@ -169,15 +248,38 @@ async function envoyerMessage(e) {
         return;
     }
 
-    if (!content) {
+    if (!texte && !fichier) {
         setMessage(messageFormMessage, "Le message est vide.", "error");
         champMessage.focus();
+        return;
+    }
+
+    const erreurImage = fichier ? verifierImage(fichier) : null;
+    if (erreurImage) {
+        setMessage(messageFormMessage, erreurImage, "error");
         return;
     }
 
     setLoading(boutonMessage, true, "Envoi…");
 
     try {
+        let content = texte;
+        let chemin = null;
+
+        if (fichier) {
+            chemin = `${currentChannelId}/${crypto.randomUUID()}.${EXTENSIONS_IMAGE[fichier.type]}`;
+            const { error: erreurEnvoi } = await supabase.storage
+                .from("message-images")
+                .upload(chemin, fichier, { contentType: fichier.type });
+
+            if (erreurEnvoi) {
+                setMessage(messageFormMessage, `L'envoi de l'image a échoué : ${erreurEnvoi.message}`, "error");
+                return;
+            }
+
+            content = `${texte}${texte ? "\n\n" : ""}![image](${chemin})`;
+        }
+
         const { data: message, error } = await supabase
             .from("messages")
             .insert({ channel_id: currentChannelId, content })
@@ -185,11 +287,13 @@ async function envoyerMessage(e) {
             .single();
 
         if (error) {
+            if (chemin) await supabase.storage.from("message-images").remove([chemin]);
             setMessage(messageFormMessage, `L'envoi a échoué : ${error.message}`, "error");
             return;
         }
 
         champMessage.value = "";
+        retirerImage();
         await chargerPseudo(message.user_id);
         if (message.channel_id === currentChannelId) {
             afficherMessage(message);
@@ -277,11 +381,11 @@ if (!(await isSessionActive()) || !user) {
     formNouvelleConversation.addEventListener("submit", creerConversation);
     conversationsList.addEventListener("click", onConversationClick);
     formMessage.addEventListener("submit", envoyerMessage);
-    // Entrée envoie, Maj + Entrée va à la ligne (isComposing : ne pas couper une saisie IME en cours)
+    champImage.addEventListener("change", onImageChoisie);
+    boutonRetirerImage.addEventListener("click", retirerImage);
     champMessage.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
             e.preventDefault();
-            // bouton désactivé = envoi déjà en cours, évite un double envoi
             if (!boutonMessage.disabled) formMessage.requestSubmit();
         }
     });
