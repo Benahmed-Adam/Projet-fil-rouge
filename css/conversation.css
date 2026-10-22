@@ -1,17 +1,36 @@
+/* La page occupe exactement l'écran : seules les listes défilent */
+body {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	height: 100dvh;
+}
+
 main {
 	display: grid;
 	grid-template-columns: 260px 1fr;
+	grid-template-rows: minmax(0, 1fr);
 	align-items: stretch;
+	flex: 1;
+	min-height: 0;
 	gap: 22px;
 	width: 90%;
 	margin-top: 28px;
+	margin-bottom: 28px;
 }
 
 main>aside {
+	display: flex;
+	flex-direction: column;
 	padding: 22px;
 	background: #ffffff;
 	border: 1px solid #d6d6d6;
-	overflow-y: scroll;
+}
+
+main>aside>nav {
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
 }
 
 main>aside button {
@@ -93,7 +112,7 @@ main>aside li a {
 	color: #333333;
 }
 
-main>aside li a.active,
+main>aside li a[aria-current],
 main>aside li a:hover {
 	color: #111111;
 	background: #e8e8e8;
@@ -103,6 +122,7 @@ main>aside li a:hover {
 main>section {
 	display: flex;
 	flex-direction: column;
+	min-height: 0;
 	padding: 24px;
 }
 
@@ -113,6 +133,10 @@ main>section h1 {
 
 main>section>ul {
 	display: grid;
+	align-content: start;
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
 	gap: 12px;
 	margin: 0 0 22px;
 	padding: 0;
@@ -211,12 +235,26 @@ article.message img {
 	border: 1px solid #d6d6d6;
 }
 
+/* Sur téléphone les deux blocs sont empilés : la page redéfile, les listes gardent une hauteur max */
 @media (max-width: 760px) {
+	body {
+		height: auto;
+	}
+
 	main {
 		grid-template-columns: 1fr;
+		grid-template-rows: auto;
 		width: 92%;
 		gap: 16px;
 		margin-top: 20px;
+	}
+
+	main>aside>nav {
+		max-height: 30vh;
+	}
+
+	main>section>ul {
+		max-height: 60vh;
 	}
 
 	main>aside {
