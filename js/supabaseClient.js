@@ -14,3 +14,7 @@ export async function isSessionActive() {
 
     return true;
 }
+
+const { data: { user } } = await supabase.auth.getUser();
+
+export { user };

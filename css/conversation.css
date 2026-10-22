@@ -34,6 +34,51 @@ main>aside .nouvelle-conversation button {
 	margin-bottom: 0;
 }
 
+main>aside .nouvelle-conversation .champ-public {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+main>aside .nouvelle-conversation .champ-public label {
+	margin-bottom: 0;
+}
+
+main>aside .nouvelle-conversation .champ-public input[type="checkbox"] {
+	position: relative;
+	width: 46px;
+	height: 26px;
+	margin: 0;
+	background: #cccccc;
+	border: 1px solid #bbbbbb;
+	border-radius: 13px;
+	appearance: none;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+main>aside .nouvelle-conversation .champ-public input[type="checkbox"]::after {
+	content: "";
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 20px;
+	height: 20px;
+	background: #ffffff;
+	border-radius: 50%;
+	transition: transform 0.2s;
+}
+
+main>aside .nouvelle-conversation .champ-public input[type="checkbox"]:checked {
+	background: #202020;
+	border-color: #202020;
+}
+
+main>aside .nouvelle-conversation .champ-public input[type="checkbox"]:checked::after {
+	transform: translateX(20px);
+}
+
 main>aside ul {
 	display: grid;
 	gap: 6px;
@@ -48,7 +93,7 @@ main>aside li a {
 	color: #333333;
 }
 
-main>aside li:first-child a,
+main>aside li a.active,
 main>aside li a:hover {
 	color: #111111;
 	background: #e8e8e8;

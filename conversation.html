@@ -22,74 +22,31 @@
         <aside>
             <h2>Liste des conversations</h2>
             <nav>
-                <ul>
-                    <li><a>Aaaa</a></li>
-                    <li><a>Bbbb</a></li>
-                    <li><a>Cccc</a></li>
-                </ul>
+                <ul id="conversations-list"></ul>
             </nav>
-            <div class="nouvelle-conversation">
+            <form class="form nouvelle-conversation" id="form-nouvelle-conversation">
                 <h3>Créer une nouvelle conversation</h3>
+                <label for="nouvelle_conversation_nom">Nom de la conversation</label>
                 <input type="text" id="nouvelle_conversation_nom" name="salon" placeholder="Ex. : Salon de qualité"
-                    maxlength="60" autocomplete="off">
-                <button type="button" id="nouvelle_conversation">Créer</button>
-            </div>
+                    maxlength="60" autocomplete="off" required>
+                <div class="champ-public">
+                    <label for="salon-public">Salon public</label>
+                    <input type="checkbox" id="salon-public" name="public" role="switch" checked>
+                </div>
+                <button type="submit" id="nouvelle_conversation">Créer</button>
+                <p class="message" id="nouvelle-conversation-message"></p>
+            </form>
         </aside>
 
         <section>
-            <h1>Messages de la conversation : Aaaa</h1>
-            <ul>
-                <li>
-                    <article class="message">
-                        <header>
-                            <h2>Envoyé par : Bob</h2>
-                            <p><time datetime="2026-09-21T10:11">à 10:11 le 21/09/2026</time></p>
-                        </header>
-                        <p>Coucou</p>
-                    </article>
-                </li>
-                <li>
-                    <article class="message">
-                        <header>
-                            <h2>Envoyé par : Bobby</h2>
-                            <p><time datetime="2026-09-21T10:12">à 10:12 le 21/09/2026</time></p>
-                        </header>
-                        <p>Coucou bob</p>
-                    </article>
-                </li>
-                <li>
-                    <article class="message">
-                        <header>
-                            <h2>Envoyé par : Bob</h2>
-                            <p><time datetime="2026-09-21T10:13">à 10:13 le 21/09/2026</time></p>
-                        </header>
-                        <p>Coucou Bobby</p>
-                    </article>
-                </li>
-                <li>
-                    <article class="message">
-                        <header>
-                            <h2>Envoyé par : Bobbybby</h2>
-                            <p><time datetime="2026-09-21T10:14">à 10:14 le 21/09/2026</time></p>
-                        </header>
-                        <p>Coucouuuuuuuuu</p>
-                    </article>
-                </li>
-                <li>
-                    <article class="message">
-                        <header>
-                            <h2>Envoyé par : Aaaaaaaaaa</h2>
-                            <p><time datetime="2026-09-21T10:15">à 10:15 le 21/09/2026</time></p>
-                        </header>
-                        <p>Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
-                    </article>
-                </li>
-            </ul>
+            <h1>Messages de la conversation : <span id="conversation-name"></span></h1>
+            <ul id="messages-list"></ul>
 
-            <div class="form" id="form-nouveau-message">
+            <form class="form" id="form-nouveau-message">
                 <label for="nouveau-message">Le message :</label>
-                <input type="text" id="nouveau-message" name="message">
-                <button type="button" id="btn-envoyer-message">Envoyer le message</button>
+                <input type="text" id="nouveau-message" name="message" placeholder="Écrivez votre message…"
+                    maxlength="2000" autocomplete="off">
+                <button type="submit" id="btn-envoyer-message">Envoyer le message</button>
 
                 <div class="champ-image">
                     <label for="image-message">Ajouter une image :</label>
@@ -101,7 +58,9 @@
                     <img id="apercu-image-visuel" src="" alt="Aperçu de l'image sélectionnée">
                     <figcaption id="apercu-image-nom"></figcaption>
                 </figure>
-            </div>
+
+                <p class="message" id="message-form-message"></p>
+            </form>
         </section>
     </main>
     <script type="module" src="js/conversation.js"></script>
