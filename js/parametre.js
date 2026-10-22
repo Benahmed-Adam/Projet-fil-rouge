@@ -1,9 +1,46 @@
-import { supabase, isSessionActive } from './supabaseClient.js';
+import { supabase, isSessionActive, user } from './supabaseClient.js';
 import { setMessage, setLoading } from './ui.js';
 
-if (!(await isSessionActive())) {
+if (!(await isSessionActive()) || !user) {
     window.location.href = "index.html";
 }
+
+const PSEUDO_REGEX = /^[A-Za-z0-9_]{3,30}$/;
+
+const formPseudo = document.getElementById("form-pseudo");
+const champPseudo = document.getElementById("pseudo");
+const btnPseudo = document.getElementById("btn-pseudo");
+const pseudoMessage = document.getElementById("pseudo-message");
+
+const { data: profil } = await supabase.from("profiles").select("username").eq("id", user?.id).single();
+champPseudo.value = profil?.username ?? "";
+
+formPseudo.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const username = champPseudo.value.trim();
+    setMessage(pseudoMessage, "", null);
+
+    if (!PSEUDO_REGEX.test(username)) {
+        setMessage(pseudoMessage, "Le pseudo doit faire 3 à 30 caractères : lettres sans accent, chiffres ou _.", "error");
+        champPseudo.focus();
+        return;
+    }
+
+    setLoading(btnPseudo, true, "Enregistrement…");
+
+    const { error } = await supabase.from("profiles").update({ username }).eq("id", user.id);
+
+    setLoading(btnPseudo, false);
+
+    if (error) {
+        setMessage(pseudoMessage, `La modification a échoué : ${error.message}`, "error");
+        return;
+    }
+
+    champPseudo.value = username;
+    setMessage(pseudoMessage, "Pseudo mis à jour.", "success");
+});
 
 document.getElementById("btn-deconnexion").addEventListener('click', async () => {
     await supabase.auth.signOut({ scope: 'local' });

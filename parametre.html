@@ -21,6 +21,20 @@
         <h1>Paramètres</h1>
 
         <section>
+            <h2>Profil</h2>
+            <form class="form" id="form-pseudo">
+                <div>
+                    <label for="pseudo">Pseudo</label>
+                    <input type="text" name="username" id="pseudo" autocomplete="username" minlength="3"
+                        maxlength="30" pattern="[A-Za-z0-9_]{3,30}"
+                        title="3 à 30 caractères : lettres sans accent, chiffres ou _" required>
+                </div>
+                <button type="submit" id="btn-pseudo">Enregistrer le pseudo</button>
+                <p class="message" id="pseudo-message"></p>
+            </form>
+        </section>
+
+        <section>
             <h2>Session</h2>
             <button type="button" id="btn-deconnexion">Se déconnecter</button>
         </section>
