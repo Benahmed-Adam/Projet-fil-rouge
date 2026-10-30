@@ -152,14 +152,20 @@ main>section label {
 	margin-bottom: 0;
 }
 
+.boutons-salon {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
 main>section>.form button,
-#btn-parametres-salon {
+.boutons-salon button {
 	background: var(--salon-accent, #202020);
 	border-color: var(--salon-accent, #202020);
 }
 
 main>section>.form button:hover,
-#btn-parametres-salon:hover {
+.boutons-salon button:hover {
 	background: var(--salon-accent, #444444);
 	filter: brightness(1.2);
 }
@@ -360,7 +366,8 @@ article.message img {
 	border: 1px solid #d6d6d6;
 }
 
-#dialog-salon {
+#dialog-salon,
+#dialog-inviter {
 	width: min(480px, 92vw);
 	max-height: 90vh;
 	padding: 24px;
@@ -368,11 +375,13 @@ article.message img {
 	border: 1px solid #d6d6d6;
 }
 
-#dialog-salon::backdrop {
+#dialog-salon::backdrop,
+#dialog-inviter::backdrop {
 	background: rgb(0 0 0 / 0.45);
 }
 
-#dialog-salon h2 {
+#dialog-salon h2,
+#dialog-inviter h2 {
 	margin-bottom: 0;
 }
 

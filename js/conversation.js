@@ -41,6 +41,15 @@ const btnAnnulerSalon = document.getElementById("btn-annuler-salon");
 const btnEnregistrerSalon = document.getElementById("btn-enregistrer-salon");
 const salonMessage = document.getElementById("salon-message");
 
+const btnInviter = document.getElementById("btn-inviter");
+const dialogInviter = document.getElementById("dialog-inviter");
+const formInviter = document.getElementById("form-inviter");
+const champInviterPseudo = document.getElementById("inviter-pseudo");
+const btnEnvoyerInvitation = document.getElementById("btn-envoyer-invitation");
+const btnFermerInviter = document.getElementById("btn-fermer-inviter");
+const inviterMessage = document.getElementById("inviter-message");
+const PSEUDO_REGEX = /^[A-Za-z0-9_]{3,30}$/;
+
 const MESSAGES_LIMITE = 100;
 
 const COULEURS_DEFAUT = { couleur_accent: "#202020", couleur_fond: "#ffffff", couleur_texte: "#171717" };
@@ -257,6 +266,7 @@ async function selectConversation(channelId) {
     currentChannelId = channel.id;
     conversationName.textContent = channel.name;
     btnParametresSalon.hidden = !["owner", "admin"].includes(channel.role);
+    btnInviter.hidden = false;
     setMessage(messageFormMessage, "", null);
     renderConversations();
     appliquerStyle(channel);
@@ -508,6 +518,75 @@ async function envoyerMessage(e) {
     }
 }
 
+function ouvrirInviter() {
+    formInviter.reset();
+    setMessage(inviterMessage, "", null);
+    dialogInviter.showModal();
+}
+
+async function envoyerInvitation(e) {
+    e.preventDefault();
+
+    const pseudo = champInviterPseudo.value.trim();
+    setMessage(inviterMessage, "", null);
+
+    if (!PSEUDO_REGEX.test(pseudo)) {
+        setMessage(inviterMessage, "Pseudo invalide : 3 à 30 caractères, lettres sans accent, chiffres ou _.", "error");
+        return;
+    }
+
+    setLoading(btnEnvoyerInvitation, true, "Envoi…");
+
+    try {
+        const { data: profil, error: erreurProfil } = await supabase
+            .from("profiles")
+            .select("id, username")
+            .ilike("username", pseudo.replaceAll("_", "\\_"))
+            .maybeSingle();
+
+        if (erreurProfil) {
+            setMessage(inviterMessage, `La recherche a échoué : ${erreurProfil.message}`, "error");
+            return;
+        }
+
+        if (!profil) {
+            setMessage(inviterMessage, `Aucun utilisateur ne s'appelle « ${pseudo} ».`, "error");
+            return;
+        }
+
+        if (profil.id === user.id) {
+            setMessage(inviterMessage, "Vous ne pouvez pas vous inviter vous-même.", "error");
+            return;
+        }
+
+        const { data: membre } = await supabase
+            .from("channel_members")
+            .select("user_id")
+            .eq("channel_id", currentChannelId)
+            .eq("user_id", profil.id)
+            .maybeSingle();
+
+        if (membre) {
+            setMessage(inviterMessage, `${profil.username} est déjà membre du salon.`, "error");
+            return;
+        }
+
+        const { error } = await supabase
+            .from("channel_invitations")
+            .insert({ channel_id: currentChannelId, invitee_id: profil.id });
+
+        if (error) {
+            setMessage(inviterMessage, `L'invitation a échoué : ${error.message}`, "error");
+            return;
+        }
+
+        champInviterPseudo.value = "";
+        setMessage(inviterMessage, `Invitation envoyée à ${profil.username}. Elle apparaîtra dans sa page Contacts.`, "success");
+    } finally {
+        setLoading(btnEnvoyerInvitation, false);
+    }
+}
+
 async function loadConversations() {
     const { data, error } = await supabase
         .from("channels")
@@ -523,8 +602,10 @@ async function loadConversations() {
     conversations = data.map(({ channel_members, ...channel }) => ({ ...channel, role: channel_members[0]?.role }));
     renderConversations();
 
-    if (conversations.length > 0) {
-        await selectConversation(conversations[0].id);
+    const salonDemande = new URLSearchParams(window.location.search).get("salon");
+    const salonAOuvrir = conversations.find((c) => c.id === salonDemande) ?? conversations[0];
+    if (salonAOuvrir) {
+        await selectConversation(salonAOuvrir.id);
     }
 }
 
@@ -588,6 +669,9 @@ if (!(await isSessionActive()) || !user) {
     champImage.addEventListener("change", onImageChoisie);
     boutonRetirerImage.addEventListener("click", retirerImage);
     btnParametresSalon.addEventListener("click", ouvrirParametresSalon);
+    btnInviter.addEventListener("click", ouvrirInviter);
+    formInviter.addEventListener("submit", envoyerInvitation);
+    btnFermerInviter.addEventListener("click", () => dialogInviter.close());
     formSalon.addEventListener("submit", enregistrerSalon);
     champFond.addEventListener("change", onFondChoisi);
     btnRetirerFond.addEventListener("click", retirerFond);

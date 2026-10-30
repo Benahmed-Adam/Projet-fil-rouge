@@ -41,7 +41,10 @@
         <section>
             <div class="entete-salon">
                 <h1>Messages de la conversation : <span id="conversation-name"></span></h1>
-                <button type="button" id="btn-parametres-salon" hidden>Paramètres du salon</button>
+                <div class="boutons-salon">
+                    <button type="button" id="btn-inviter" hidden>Inviter</button>
+                    <button type="button" id="btn-parametres-salon" hidden>Paramètres du salon</button>
+                </div>
             </div>
             <ul id="messages-list"></ul>
 
@@ -107,6 +110,22 @@
                 <button type="submit" id="btn-enregistrer-salon">Enregistrer</button>
             </div>
             <p class="message" id="salon-message"></p>
+        </form>
+    </dialog>
+
+    <dialog id="dialog-inviter" aria-labelledby="titre-dialog-inviter">
+        <form class="form" id="form-inviter">
+            <h2 id="titre-dialog-inviter">Inviter dans le salon</h2>
+            <div>
+                <label for="inviter-pseudo">Pseudo de la personne</label>
+                <input type="text" id="inviter-pseudo" name="pseudo" autocomplete="off" required
+                    pattern="[A-Za-z0-9_]{3,30}" title="3 à 30 caractères : lettres sans accent, chiffres ou _">
+            </div>
+            <div class="actions-dialog">
+                <button type="button" id="btn-fermer-inviter" class="bouton-secondaire">Fermer</button>
+                <button type="submit" id="btn-envoyer-invitation">Envoyer l'invitation</button>
+            </div>
+            <p class="message" id="inviter-message"></p>
         </form>
     </dialog>
     <script src="https://cdn.jsdelivr.net/npm/marked@17.0.6/lib/marked.umd.js"></script>
