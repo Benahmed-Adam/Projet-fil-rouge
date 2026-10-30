@@ -184,6 +184,21 @@ article.message {
 	border-left-width: 4px;
 }
 
+main>section>ul>li {
+	justify-self: start;
+	min-width: 0;
+	max-width: 75%;
+}
+
+main>section>ul>li.message-envoye {
+	justify-self: end;
+}
+
+main>section>ul>li.message-envoye article.message {
+	border-left-width: 1px;
+	border-right-width: 4px;
+}
+
 article.message header {
 	display: flex;
 	flex-wrap: wrap;
@@ -440,6 +455,10 @@ article.message img {
 
 	main>section>ul {
 		max-height: 60vh;
+	}
+
+	main>section>ul>li {
+		max-width: 90%;
 	}
 
 	main>aside {

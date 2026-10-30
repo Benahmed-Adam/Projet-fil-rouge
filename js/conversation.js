@@ -128,6 +128,9 @@ function afficherMessage(message) {
     messagesAffiches.add(message.id);
 
     const li = document.createElement("li");
+    if (message.user_id === user.id) {
+        li.className = "message-envoye";
+    }
     const article = document.createElement("article");
     article.className = "message";
 
