@@ -20,6 +20,38 @@
     <main>
         <h1>Contacts</h1>
 
+        <section class="pleine-largeur">
+            <h2>Ajouter un contact</h2>
+            <form class="form form-ajout-contact" id="form-ajout-contact">
+                <label for="ajout-contact-pseudo">Pseudo de la personne</label>
+                <input type="text" id="ajout-contact-pseudo" name="pseudo" autocomplete="off" required
+                    pattern="[A-Za-z0-9_]{3,30}" title="3 à 30 caractères : lettres sans accent, chiffres ou _">
+                <button type="submit" id="btn-ajout-contact">Envoyer la demande</button>
+            </form>
+            <p class="message" id="ajout-contact-message"></p>
+        </section>
+
+        <section>
+            <h2>Mes contacts</h2>
+            <ul id="mes-contacts"></ul>
+            <p class="liste-vide" id="mes-contacts-vide" hidden>Vous n'avez pas encore de contact.</p>
+            <p class="message" id="mes-contacts-message"></p>
+        </section>
+
+        <section>
+            <h2>Demandes de contact reçues</h2>
+            <ul id="demandes-recues"></ul>
+            <p class="liste-vide" id="demandes-recues-vide" hidden>Aucune demande reçue.</p>
+            <p class="message" id="demandes-recues-message"></p>
+        </section>
+
+        <section>
+            <h2>Demandes de contact envoyées</h2>
+            <ul id="demandes-envoyees"></ul>
+            <p class="liste-vide" id="demandes-envoyees-vide" hidden>Aucune demande envoyée.</p>
+            <p class="message" id="demandes-envoyees-message"></p>
+        </section>
+
         <section>
             <h2>Salons publics</h2>
             <ul id="salons-publics"></ul>
