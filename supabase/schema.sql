@@ -12,7 +12,7 @@ CREATE TABLE public.profiles (
 CREATE TABLE public.channels (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   name text NOT NULL CHECK (char_length(btrim(name)) >= 1 AND char_length(btrim(name)) <= 100),
-  style jsonb NOT NULL DEFAULT '{}'::jsonb CHECK (octet_length(style::text) <= 8192 AND style_valide(style)),
+  style jsonb NOT NULL DEFAULT '{}'::jsonb,
   is_public boolean NOT NULL DEFAULT false,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   created_by uuid NOT NULL DEFAULT auth.uid(),

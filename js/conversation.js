@@ -23,13 +23,37 @@ const apercuImage = document.getElementById("apercu-image");
 const apercuImageVisuel = document.getElementById("apercu-image-visuel");
 const apercuImageNom = document.getElementById("apercu-image-nom");
 
+const sectionMessages = messagesList.closest("section");
+const btnParametresSalon = document.getElementById("btn-parametres-salon");
+const dialogSalon = document.getElementById("dialog-salon");
+const formSalon = document.getElementById("form-salon");
+const champSalonNom = document.getElementById("salon-nom");
+const champsCouleurs = {
+    couleur_accent: document.getElementById("salon-couleur-accent"),
+    couleur_fond: document.getElementById("salon-couleur-fond"),
+    couleur_texte: document.getElementById("salon-couleur-texte"),
+};
+const btnCouleursDefaut = document.getElementById("btn-couleurs-defaut");
+const champFond = document.getElementById("salon-image-fond");
+const apercuFond = document.getElementById("salon-apercu-fond");
+const btnRetirerFond = document.getElementById("btn-retirer-fond");
+const btnAnnulerSalon = document.getElementById("btn-annuler-salon");
+const btnEnregistrerSalon = document.getElementById("btn-enregistrer-salon");
+const salonMessage = document.getElementById("salon-message");
+
 const MESSAGES_LIMITE = 100;
+
+const COULEURS_DEFAUT = { couleur_accent: "#202020", couleur_fond: "#ffffff", couleur_texte: "#171717" };
+const COULEUR_REGEX = /^#[0-9a-fA-F]{6}$/;
+const VARIABLES_COULEURS = { couleur_accent: "--salon-accent", couleur_fond: "--salon-fond", couleur_texte: "--salon-texte" };
 
 const EXTENSIONS_IMAGE = { "image/png": "png", "image/jpeg": "jpg", "image/gif": "gif", "image/webp": "webp" };
 const CHEMIN_IMAGE_REGEX = /^[0-9a-f-]{36}\/[0-9a-f-]{36}\.(png|jpg|gif|webp)$/;
 
 const urlsSignees = new Map();
 let urlApercu = null;
+let urlApercuFond = null;
+let fondRetire = false;
 
 let conversations = [];
 let currentChannelId = null;
@@ -164,6 +188,40 @@ async function loadMessages(channelId) {
     }
 }
 
+async function appliquerStyle(channel) {
+    const style = channel.style ?? {};
+
+    for (const [cle, variable] of Object.entries(VARIABLES_COULEURS)) {
+        if (COULEUR_REGEX.test(style[cle] ?? "")) {
+            sectionMessages.style.setProperty(variable, style[cle]);
+        } else {
+            sectionMessages.style.removeProperty(variable);
+        }
+    }
+
+    sectionMessages.style.removeProperty("--salon-image");
+    if (CHEMIN_IMAGE_REGEX.test(style.image_fond ?? "")) {
+        const url = await urlSignee(style.image_fond);
+        if (url && channel.id === currentChannelId) {
+            sectionMessages.style.setProperty("--salon-image", `url("${url.replaceAll('"', "%22")}")`);
+        }
+    }
+}
+
+function mettreAJourSalon(salon) {
+    const channel = conversations.find((c) => c.id === salon.id);
+    if (!channel) return;
+
+    channel.name = salon.name;
+    channel.style = salon.style;
+    renderConversations();
+
+    if (channel.id === currentChannelId) {
+        conversationName.textContent = channel.name;
+        appliquerStyle(channel);
+    }
+}
+
 function ecouterMessages(channelId) {
     if (abonnementMessages) {
         supabase.removeChannel(abonnementMessages);
@@ -181,6 +239,11 @@ function ecouterMessages(channelId) {
                 }
             }
         )
+        .on(
+            "postgres_changes",
+            { event: "UPDATE", schema: "public", table: "channels", filter: `id=eq.${channelId}` },
+            ({ new: salon }) => mettreAJourSalon(salon)
+        )
         .subscribe();
 }
 
@@ -190,11 +253,149 @@ async function selectConversation(channelId) {
 
     currentChannelId = channel.id;
     conversationName.textContent = channel.name;
+    btnParametresSalon.hidden = !["owner", "admin"].includes(channel.role);
     setMessage(messageFormMessage, "", null);
     renderConversations();
+    appliquerStyle(channel);
 
     ecouterMessages(channel.id);
     await loadMessages(channel.id);
+}
+
+function afficherApercuFond(url) {
+    apercuFond.src = url ?? "";
+    apercuFond.hidden = !url;
+    btnRetirerFond.hidden = !url;
+}
+
+function libererApercuFond() {
+    if (urlApercuFond) URL.revokeObjectURL(urlApercuFond);
+    urlApercuFond = null;
+}
+
+async function ouvrirParametresSalon() {
+    const channel = conversations.find((c) => c.id === currentChannelId);
+    if (!channel) return;
+
+    const style = channel.style ?? {};
+    champSalonNom.value = channel.name;
+    for (const [cle, champ] of Object.entries(champsCouleurs)) {
+        champ.value = COULEUR_REGEX.test(style[cle] ?? "") ? style[cle] : COULEURS_DEFAUT[cle];
+    }
+
+    champFond.value = "";
+    fondRetire = false;
+    libererApercuFond();
+    afficherApercuFond(null);
+    setMessage(salonMessage, "", null);
+    dialogSalon.showModal();
+
+    if (CHEMIN_IMAGE_REGEX.test(style.image_fond ?? "")) {
+        afficherApercuFond(await urlSignee(style.image_fond));
+    }
+}
+
+function onFondChoisi() {
+    const fichier = champFond.files[0];
+    setMessage(salonMessage, "", null);
+    if (!fichier) return;
+
+    const erreur = verifierImage(fichier);
+    if (erreur) {
+        champFond.value = "";
+        setMessage(salonMessage, erreur, "error");
+        return;
+    }
+
+    libererApercuFond();
+    urlApercuFond = URL.createObjectURL(fichier);
+    afficherApercuFond(urlApercuFond);
+}
+
+function retirerFond() {
+    champFond.value = "";
+    fondRetire = true;
+    libererApercuFond();
+    afficherApercuFond(null);
+}
+
+function couleursParDefaut() {
+    for (const [cle, champ] of Object.entries(champsCouleurs)) {
+        champ.value = COULEURS_DEFAUT[cle];
+    }
+}
+
+async function enregistrerSalon(e) {
+    e.preventDefault();
+
+    const channel = conversations.find((c) => c.id === currentChannelId);
+    if (!channel) return;
+
+    const name = champSalonNom.value.trim();
+    setMessage(salonMessage, "", null);
+
+    if (!name || name.length > NOM_MAX_LENGTH) {
+        setMessage(salonMessage, `Le nom doit faire entre 1 et ${NOM_MAX_LENGTH} caractères.`, "error");
+        champSalonNom.focus();
+        return;
+    }
+
+    const style = {};
+    for (const [cle, champ] of Object.entries(champsCouleurs)) {
+        const couleur = champ.value.toLowerCase();
+        if (couleur !== COULEURS_DEFAUT[cle]) style[cle] = couleur;
+    }
+
+    const ancienFond = channel.style?.image_fond ?? null;
+    if (ancienFond && !fondRetire) style.image_fond = ancienFond;
+
+    const fichier = champFond.files[0];
+    const erreurImage = fichier ? verifierImage(fichier) : null;
+    if (erreurImage) {
+        setMessage(salonMessage, erreurImage, "error");
+        return;
+    }
+
+    setLoading(btnEnregistrerSalon, true, "Enregistrement…");
+
+    try {
+        let nouveauFond = null;
+
+        if (fichier) {
+            nouveauFond = `${channel.id}/${crypto.randomUUID()}.${EXTENSIONS_IMAGE[fichier.type]}`;
+            const { error: erreurEnvoi } = await supabase.storage
+                .from("message-images")
+                .upload(nouveauFond, fichier, { contentType: fichier.type });
+
+            if (erreurEnvoi) {
+                setMessage(salonMessage, `L'envoi de l'image a échoué : ${erreurEnvoi.message}`, "error");
+                return;
+            }
+            style.image_fond = nouveauFond;
+        }
+
+        const { data: salon, error } = await supabase
+            .from("channels")
+            .update({ name, style })
+            .eq("id", channel.id)
+            .select("id, name, style")
+            .single();
+
+        if (error) {
+            if (nouveauFond) await supabase.storage.from("message-images").remove([nouveauFond]);
+            setMessage(salonMessage, `La modification a échoué : ${error.message}`, "error");
+            return;
+        }
+
+        if (ancienFond && ancienFond !== salon.style.image_fond) {
+            supabase.storage.from("message-images").remove([ancienFond]);
+        }
+
+        mettreAJourSalon(salon);
+        dialogSalon.close();
+    } finally {
+        setLoading(btnEnregistrerSalon, false);
+    }
 }
 
 function verifierImage(fichier) {
@@ -307,7 +508,7 @@ async function envoyerMessage(e) {
 async function loadConversations() {
     const { data, error } = await supabase
         .from("channels")
-        .select("*, channel_members!inner(user_id)")
+        .select("*, channel_members!inner(user_id, role)")
         .eq("channel_members.user_id", user.id)
         .order("created_at", { ascending: true });
 
@@ -316,7 +517,7 @@ async function loadConversations() {
         return;
     }
 
-    conversations = data.map(({ channel_members, ...channel }) => channel);
+    conversations = data.map(({ channel_members, ...channel }) => ({ ...channel, role: channel_members[0]?.role }));
     renderConversations();
 
     if (conversations.length > 0) {
@@ -360,7 +561,7 @@ async function creerConversation(e) {
         formNouvelleConversation.reset();
         setMessage(messageNouvelleConversation, `La conversation « ${name} » a été créée.`, "success");
 
-        conversations.push(channel);
+        conversations.push({ ...channel, role: "owner" });
         selectConversation(channel.id);
     } finally {
         setLoading(boutonNouvelleConversation, false);
@@ -383,6 +584,13 @@ if (!(await isSessionActive()) || !user) {
     formMessage.addEventListener("submit", envoyerMessage);
     champImage.addEventListener("change", onImageChoisie);
     boutonRetirerImage.addEventListener("click", retirerImage);
+    btnParametresSalon.addEventListener("click", ouvrirParametresSalon);
+    formSalon.addEventListener("submit", enregistrerSalon);
+    champFond.addEventListener("change", onFondChoisi);
+    btnRetirerFond.addEventListener("click", retirerFond);
+    btnCouleursDefaut.addEventListener("click", couleursParDefaut);
+    btnAnnulerSalon.addEventListener("click", () => dialogSalon.close());
+    dialogSalon.addEventListener("close", libererApercuFond);
     champMessage.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
             e.preventDefault();

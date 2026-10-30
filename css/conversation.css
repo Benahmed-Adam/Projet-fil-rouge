@@ -123,11 +123,45 @@ main>section {
 	flex-direction: column;
 	min-height: 0;
 	padding: 24px;
+	color: var(--salon-texte, #171717);
+	background-color: var(--salon-fond, #ffffff);
+	background-image: var(--salon-image, none);
+	background-position: center;
+	background-size: cover;
 }
 
 main>section h1 {
 	margin-bottom: 20px;
 	font-size: 25px;
+}
+
+main>section label {
+	color: inherit;
+}
+
+.entete-salon {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px 16px;
+	margin-bottom: 20px;
+}
+
+.entete-salon h1 {
+	margin-bottom: 0;
+}
+
+main>section>.form button,
+#btn-parametres-salon {
+	background: var(--salon-accent, #202020);
+	border-color: var(--salon-accent, #202020);
+}
+
+main>section>.form button:hover,
+#btn-parametres-salon:hover {
+	background: var(--salon-accent, #444444);
+	filter: brightness(1.2);
 }
 
 main>section>ul {
@@ -145,6 +179,9 @@ main>section>ul {
 article.message {
 	padding: 14px 16px;
 	overflow-wrap: break-word;
+	background: color-mix(in srgb, var(--salon-fond, #ffffff) 90%, transparent);
+	border-color: var(--salon-accent, #d6d6d6);
+	border-left-width: 4px;
 }
 
 article.message header {
@@ -163,8 +200,8 @@ article.message h2 {
 
 article.message header p {
 	margin: 0;
-	color: #666666;
 	font-size: 14px;
+	opacity: 0.7;
 }
 
 article.message {
@@ -242,7 +279,8 @@ main>section>.form {
 	align-items: end;
 	gap: 10px 12px;
 	margin-top: auto;
-	padding-top: 18px;
+	padding: 14px;
+	background: color-mix(in srgb, var(--salon-fond, #ffffff) 90%, transparent);
 	border-top: 1px solid #d6d6d6;
 }
 
@@ -305,6 +343,82 @@ article.message img {
 	height: auto;
 	margin-top: 8px;
 	border: 1px solid #d6d6d6;
+}
+
+#dialog-salon {
+	width: min(480px, 92vw);
+	max-height: 90vh;
+	padding: 24px;
+	color: #171717;
+	border: 1px solid #d6d6d6;
+}
+
+#dialog-salon::backdrop {
+	background: rgb(0 0 0 / 0.45);
+}
+
+#dialog-salon h2 {
+	margin-bottom: 0;
+}
+
+#dialog-salon fieldset {
+	display: grid;
+	gap: 10px;
+	margin: 0;
+	padding: 12px 14px;
+	border: 1px solid #d6d6d6;
+}
+
+#dialog-salon legend {
+	padding: 0 4px;
+	font-weight: 600;
+}
+
+#dialog-salon input[type="file"] {
+	font: inherit;
+}
+
+.champ-couleur {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.champ-couleur label {
+	margin: 0;
+}
+
+.champ-couleur input[type="color"] {
+	width: 56px;
+	height: 36px;
+	padding: 2px;
+	background: #ffffff;
+	border: 1px solid #cccccc;
+	cursor: pointer;
+}
+
+#salon-apercu-fond {
+	max-width: 100%;
+	max-height: 140px;
+	border: 1px solid #d6d6d6;
+}
+
+.actions-dialog {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+}
+
+.bouton-secondaire {
+	color: #333333;
+	background: #ffffff;
+	border-color: #bdbdbd;
+}
+
+.bouton-secondaire:hover {
+	background: #eeeeee;
+	border-color: #888888;
 }
 
 @media (max-width: 760px) {

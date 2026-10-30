@@ -39,7 +39,10 @@
         </aside>
 
         <section>
-            <h1>Messages de la conversation : <span id="conversation-name"></span></h1>
+            <div class="entete-salon">
+                <h1>Messages de la conversation : <span id="conversation-name"></span></h1>
+                <button type="button" id="btn-parametres-salon" hidden>Paramètres du salon</button>
+            </div>
             <ul id="messages-list"></ul>
 
             <form class="form" id="form-nouveau-message">
@@ -63,6 +66,49 @@
             </form>
         </section>
     </main>
+
+    <dialog id="dialog-salon" aria-labelledby="titre-dialog-salon">
+        <form class="form" id="form-salon">
+            <h2 id="titre-dialog-salon">Paramètres du salon</h2>
+
+            <div>
+                <label for="salon-nom">Nom du salon</label>
+                <input type="text" id="salon-nom" name="nom" maxlength="100" autocomplete="off" required>
+            </div>
+
+            <fieldset>
+                <legend>Couleurs</legend>
+                <div class="champ-couleur">
+                    <label for="salon-couleur-accent">Accent (boutons, bordures)</label>
+                    <input type="color" id="salon-couleur-accent" name="couleur_accent">
+                </div>
+                <div class="champ-couleur">
+                    <label for="salon-couleur-fond">Fond</label>
+                    <input type="color" id="salon-couleur-fond" name="couleur_fond">
+                </div>
+                <div class="champ-couleur">
+                    <label for="salon-couleur-texte">Texte</label>
+                    <input type="color" id="salon-couleur-texte" name="couleur_texte">
+                </div>
+                <button type="button" id="btn-couleurs-defaut" class="bouton-secondaire">Couleurs par défaut</button>
+            </fieldset>
+
+            <fieldset>
+                <legend>Image de fond</legend>
+                <img id="salon-apercu-fond" alt="Aperçu de l'image de fond" hidden>
+                <label for="salon-image-fond">Choisir une image (PNG, JPEG, GIF ou WebP, 5 Mo max.)</label>
+                <input type="file" id="salon-image-fond" name="image_fond"
+                    accept="image/png, image/jpeg, image/gif, image/webp">
+                <button type="button" id="btn-retirer-fond" class="bouton-secondaire" hidden>Retirer l'image de fond</button>
+            </fieldset>
+
+            <div class="actions-dialog">
+                <button type="button" id="btn-annuler-salon" class="bouton-secondaire">Annuler</button>
+                <button type="submit" id="btn-enregistrer-salon">Enregistrer</button>
+            </div>
+            <p class="message" id="salon-message"></p>
+        </form>
+    </dialog>
     <script src="https://cdn.jsdelivr.net/npm/marked@17.0.6/lib/marked.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.10/dist/purify.min.js"></script>
     <script type="module" src="js/conversation.js"></script>
