@@ -559,6 +559,18 @@ async function envoyerInvitation(e) {
             return;
         }
 
+        const { data: contact } = await supabase
+            .from("contacts")
+            .select("status")
+            .eq("status", "accepted")
+            .or(`requester_id.eq.${profil.id},addressee_id.eq.${profil.id}`)
+            .maybeSingle();
+
+        if (!contact) {
+            setMessage(inviterMessage, `${profil.username} n'est pas dans vos contacts. Envoyez-lui d'abord une demande depuis la page Contacts.`, "error");
+            return;
+        }
+
         const { data: membre } = await supabase
             .from("channel_members")
             .select("user_id")
