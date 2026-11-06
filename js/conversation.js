@@ -50,6 +50,9 @@ const btnFermerInviter = document.getElementById("btn-fermer-inviter");
 const inviterMessage = document.getElementById("inviter-message");
 const PSEUDO_REGEX = /^[A-Za-z0-9_]{3,30}$/;
 
+const btnQuitterSalon = document.getElementById("btn-quitter-salon");
+const btnSupprimerSalon = document.getElementById("btn-supprimer-salon");
+
 const MESSAGES_LIMITE = 100;
 
 const COULEURS_DEFAUT = { couleur_accent: "#202020", couleur_fond: "#ffffff", couleur_texte: "#171717" };
@@ -267,12 +270,96 @@ async function selectConversation(channelId) {
     conversationName.textContent = channel.name;
     btnParametresSalon.hidden = !["owner", "admin"].includes(channel.role);
     btnInviter.hidden = false;
+    btnQuitterSalon.hidden = channel.role === "owner";
+    btnSupprimerSalon.hidden = channel.role !== "owner";
     setMessage(messageFormMessage, "", null);
     renderConversations();
     appliquerStyle(channel);
 
     ecouterMessages(channel.id);
     await loadMessages(channel.id);
+}
+
+function viderConversation() {
+    currentChannelId = null;
+    if (abonnementMessages) {
+        supabase.removeChannel(abonnementMessages);
+        abonnementMessages = null;
+    }
+    messagesList.replaceChildren();
+    messagesAffiches.clear();
+    conversationName.textContent = "";
+
+    renderConversations();
+    appliquerStyle({});
+}
+
+async function retirerConversation(channelId) {
+    conversations = conversations.filter((c) => c.id !== channelId);
+
+    if (channelId !== currentChannelId) {
+        renderConversations();
+    } else if (conversations.length > 0) {
+        await selectConversation(conversations[0].id);
+    } else {
+        viderConversation();
+    }
+}
+
+async function quitterSalon() {
+    const channel = conversations.find((c) => c.id === currentChannelId);
+    if (!channel) return;
+
+    const confirmation = channel.is_public
+        ? `Quitter le salon " ${channel.name} " ?`
+        : `Quitter le salon privé " ${channel.name} " ? Il faudra une nouvelle invitation pour y revenir.`;
+    if (!window.confirm(confirmation)) return;
+
+    setMessage(messageFormMessage, "", null);
+    setLoading(btnQuitterSalon, true, "Départ…");
+
+    const { data, error } = await supabase
+        .from("channel_members")
+        .delete()
+        .eq("channel_id", channel.id)
+        .eq("user_id", user.id)
+        .select("channel_id");
+
+    setLoading(btnQuitterSalon, false);
+
+    if (error || data.length === 0) {
+        setMessage(messageFormMessage, `Impossible de quitter le salon : ${error?.message}`, "error");
+        return;
+    }
+
+    await retirerConversation(channel.id);
+    setMessage(messageFormMessage, `Vous avez quitté le salon " ${channel.name} ".`, "success");
+}
+
+async function supprimerSalon() {
+    const channel = conversations.find((c) => c.id === currentChannelId);
+    if (!channel) return;
+
+    if (!window.confirm(`Supprimer définitivement le salon " ${channel.name} " et tous ses messages, pour tous ses membres ?`)) return;
+
+    setMessage(messageFormMessage, "", null);
+    setLoading(btnSupprimerSalon, true, "Suppression…");
+
+    const { data, error } = await supabase
+        .from("channels")
+        .delete()
+        .eq("id", channel.id)
+        .select("id");
+
+    setLoading(btnSupprimerSalon, false);
+
+    if (error || data.length === 0) {
+        setMessage(messageFormMessage, `Impossible de supprimer le salon : ${error?.message}`, "error");
+        return;
+    }
+
+    await retirerConversation(channel.id);
+    setMessage(messageFormMessage, `Le salon " ${channel.name} " a été supprimé.`, "success");
 }
 
 function afficherApercuFond(url) {
@@ -550,7 +637,7 @@ async function envoyerInvitation(e) {
         }
 
         if (!profil) {
-            setMessage(inviterMessage, `Aucun utilisateur ne s'appelle « ${pseudo} ».`, "error");
+            setMessage(inviterMessage, `Aucun utilisateur ne s'appelle " ${pseudo} ".`, "error");
             return;
         }
 
@@ -655,7 +742,7 @@ async function creerConversation(e) {
         }
 
         formNouvelleConversation.reset();
-        setMessage(messageNouvelleConversation, `La conversation « ${name} » a été créée.`, "success");
+        setMessage(messageNouvelleConversation, `La conversation " ${name} " a été créée.`, "success");
 
         conversations.push({ ...channel, role: "owner" });
         selectConversation(channel.id);
@@ -682,6 +769,8 @@ if (!(await isSessionActive()) || !user) {
     boutonRetirerImage.addEventListener("click", retirerImage);
     btnParametresSalon.addEventListener("click", ouvrirParametresSalon);
     btnInviter.addEventListener("click", ouvrirInviter);
+    btnQuitterSalon.addEventListener("click", quitterSalon);
+    btnSupprimerSalon.addEventListener("click", supprimerSalon);
     formInviter.addEventListener("submit", envoyerInvitation);
     btnFermerInviter.addEventListener("click", () => dialogInviter.close());
     formSalon.addEventListener("submit", enregistrerSalon);
