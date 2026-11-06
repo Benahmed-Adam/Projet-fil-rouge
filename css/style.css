@@ -1,87 +1,87 @@
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-    min-width: 320px;
-    margin: 0;
-    color: #171717;
-    background: #d3d0d0;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  min-width: 320px;
+  margin: 0;
+  color: #171717;
+  background: #d3d0d0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body>header {
-    min-height: 68px;
-    padding: 12px 5%;
-    background: #ffffff;
-    border-bottom: 1px solid #d6d6d6;
+body > header {
+  min-height: 68px;
+  padding: 12px 5%;
+  background: #ffffff;
+  border-bottom: 1px solid #d6d6d6;
 }
 
-body>header nav {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 12px 24px;
+body > header nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
 }
 
 a {
-    color: #333333;
-    font-weight: 600;
-    text-decoration: none;
+  color: #333333;
+  font-weight: 600;
+  text-decoration: none;
 }
 
 a:hover {
-    color: #111111;
-    text-decoration: underline;
+  color: #111111;
+  text-decoration: underline;
 }
 
 main {
-    width: 90%;
-    max-width: 80vw;
-    margin: 40px auto 64px;
+  width: 90%;
+  max-width: 80vw;
+  margin: 40px auto 64px;
 }
 
 h1,
 h2,
 p {
-    margin-top: 0;
+  margin-top: 0;
 }
 
 h1 {
-    margin-bottom: 12px;
-    font-size: 32px;
+  margin-bottom: 12px;
+  font-size: 32px;
 }
 
 h2 {
-    margin-bottom: 18px;
-    font-size: 20px;
+  margin-bottom: 18px;
+  font-size: 20px;
 }
 
 p {
-    line-height: 1.5;
+  line-height: 1.5;
 }
 
 section,
 article {
-    background: #ffffff;
-    border: 1px solid #d6d6d6;
+  background: #ffffff;
+  border: 1px solid #d6d6d6;
 }
 
 section {
-    padding: 24px;
+  padding: 24px;
 }
 
 .form {
-    display: grid;
-    gap: 16px;
+  display: grid;
+  gap: 16px;
 }
 
 label {
-    display: block;
-    margin-bottom: 7px;
-    color: #333333;
-    font-size: 15px;
-    font-weight: 600;
+  display: block;
+  margin-bottom: 7px;
+  color: #333333;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 input[type="text"],
@@ -90,13 +90,13 @@ input[type="password"],
 input[type="search"],
 textarea,
 select {
-    width: 100%;
-    min-height: 44px;
-    padding: 10px 12px;
-    color: #171717;
-    font: inherit;
-    background: #ffffff;
-    border: 1px solid #cccccc;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  color: #171717;
+  font: inherit;
+  background: #ffffff;
+  border: 1px solid #cccccc;
 }
 
 input:focus,
@@ -104,71 +104,71 @@ textarea:focus,
 select:focus,
 button:focus,
 a:focus {
-    outline: 2px solid #777777;
+  outline: 2px solid #777777;
 }
 
 input[type="checkbox"] {
-    width: 17px;
-    height: 17px;
-    vertical-align: middle;
+  width: 17px;
+  height: 17px;
+  vertical-align: middle;
 }
 
 button {
-    min-height: 42px;
-    padding: 9px 16px;
-    color: #ffffff;
-    font: inherit;
-    font-weight: 600;
-    background: #202020;
-    border: 1px solid #202020;
-    cursor: pointer;
+  min-height: 42px;
+  padding: 9px 16px;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 600;
+  background: #202020;
+  border: 1px solid #202020;
+  cursor: pointer;
 }
 
 button:hover {
-    background: #444444;
+  background: #444444;
 }
 
 button:disabled,
 button:disabled:hover {
-    background: #202020;
-    cursor: default;
-    opacity: 0.6;
+  background: #202020;
+  cursor: default;
+  opacity: 0.6;
 }
 
 .message {
-    margin: 0;
-    font-size: 15px;
-    font-weight: 600;
-    line-height: 1.4;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 .message:empty {
-    display: none;
+  display: none;
 }
 
 .message--error {
-    color: #b00020;
+  color: #b00020;
 }
 
 .message--success {
-    color: #1b7f3b;
+  color: #1b7f3b;
 }
 
 ul {
-    padding-left: 22px;
+  padding-left: 22px;
 }
 
 @media (max-width: 600px) {
-    main {
-        width: 92%;
-        margin-top: 24px;
-    }
+  main {
+    width: 92%;
+    margin-top: 24px;
+  }
 
-    h1 {
-        font-size: 26px;
-    }
+  h1 {
+    font-size: 26px;
+  }
 
-    section {
-        padding: 19px;
-    }
+  section {
+    padding: 19px;
+  }
 }

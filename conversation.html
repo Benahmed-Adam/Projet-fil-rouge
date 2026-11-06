@@ -1,138 +1,233 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Liste des conversations et messages échangés">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/conversation.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Liste des conversations et messages échangés"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/conversation.css" />
     <title>Conversationner</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <header>
-        <nav>
-            <a href="contact.html">Vers les contacts</a>
-            <a href="parametre.html">Vers les paramètres</a>
-        </nav>
+      <nav>
+        <a href="contact.html">Vers les contacts</a>
+        <a href="parametre.html">Vers les paramètres</a>
+      </nav>
     </header>
 
     <main>
-        <aside>
-            <h2>Liste des conversations</h2>
-            <nav>
-                <ul id="conversations-list"></ul>
-            </nav>
-            <form class="form nouvelle-conversation" id="form-nouvelle-conversation">
-                <h3>Créer une nouvelle conversation</h3>
-                <label for="nouvelle_conversation_nom">Nom de la conversation</label>
-                <input type="text" id="nouvelle_conversation_nom" name="salon" placeholder="Ex. : Salon de qualité"
-                    maxlength="60" autocomplete="off" required>
-                <div class="champ-public">
-                    <label for="salon-public">Salon public</label>
-                    <input type="checkbox" id="salon-public" name="public" role="switch" checked>
-                </div>
-                <button type="submit" id="nouvelle_conversation">Créer</button>
-                <p class="message" id="nouvelle-conversation-message"></p>
-            </form>
-        </aside>
+      <aside>
+        <h2>Liste des conversations</h2>
+        <nav>
+          <ul id="conversations-list"></ul>
+        </nav>
+        <form
+          class="form nouvelle-conversation"
+          id="form-nouvelle-conversation"
+        >
+          <h3>Créer une nouvelle conversation</h3>
+          <label for="nouvelle_conversation_nom">Nom de la conversation</label>
+          <input
+            type="text"
+            id="nouvelle_conversation_nom"
+            name="salon"
+            placeholder="Ex. : Salon de qualité"
+            maxlength="60"
+            autocomplete="off"
+            required
+          />
+          <div class="champ-public">
+            <label for="salon-public">Salon public</label>
+            <input
+              type="checkbox"
+              id="salon-public"
+              name="public"
+              role="switch"
+              checked
+            />
+          </div>
+          <button type="submit" id="nouvelle_conversation">Créer</button>
+          <p class="message" id="nouvelle-conversation-message"></p>
+        </form>
+      </aside>
 
-        <section>
-            <div class="entete-salon">
-                <h1>Messages de la conversation : <span id="conversation-name"></span></h1>
-                <div class="boutons-salon">
-                    <button type="button" id="btn-inviter" hidden>Inviter</button>
-                    <button type="button" id="btn-parametres-salon" hidden>Paramètres du salon</button>
-                    <button type="button" id="btn-quitter-salon" hidden>Quitter le salon</button>
-                    <button type="button" id="btn-supprimer-salon" hidden>Supprimer le salon</button>
-                </div>
-            </div>
-            <ul id="messages-list"></ul>
+      <section>
+        <div class="entete-salon">
+          <h1>
+            Messages de la conversation : <span id="conversation-name"></span>
+          </h1>
+          <div class="boutons-salon">
+            <button type="button" id="btn-inviter" hidden>Inviter</button>
+            <button type="button" id="btn-parametres-salon" hidden>
+              Paramètres du salon
+            </button>
+            <button type="button" id="btn-quitter-salon" hidden>
+              Quitter le salon
+            </button>
+            <button type="button" id="btn-supprimer-salon" hidden>
+              Supprimer le salon
+            </button>
+          </div>
+        </div>
+        <ul id="messages-list"></ul>
 
-            <form class="form" id="form-nouveau-message">
-                <label for="nouveau-message">Le message :</label>
-                <textarea id="nouveau-message" name="message" rows="2" maxlength="2000" autocomplete="off"
-                    placeholder="Écrivez votre message… (Maj + Entrée pour aller à la ligne)"></textarea>
-                <button type="submit" id="btn-envoyer-message">Envoyer le message</button>
+        <form class="form" id="form-nouveau-message">
+          <label for="nouveau-message">Le message :</label>
+          <textarea
+            id="nouveau-message"
+            name="message"
+            rows="2"
+            maxlength="2000"
+            autocomplete="off"
+            placeholder="Écrivez votre message… (Maj + Entrée pour aller à la ligne)"
+          ></textarea>
+          <button type="submit" id="btn-envoyer-message">
+            Envoyer le message
+          </button>
 
-                <div class="champ-image">
-                    <label for="image-message">Ajouter une image :</label>
-                    <input type="file" id="image-message" name="image" accept="image/png, image/jpeg, image/gif, image/webp">
-                    <button type="button" id="btn-retirer-image" hidden>Retirer l'image</button>
-                </div>
+          <div class="champ-image">
+            <label for="image-message">Ajouter une image :</label>
+            <input
+              type="file"
+              id="image-message"
+              name="image"
+              accept="image/png, image/jpeg, image/gif, image/webp"
+            />
+            <button type="button" id="btn-retirer-image" hidden>
+              Retirer l'image
+            </button>
+          </div>
 
-                <figure id="apercu-image" hidden>
-                    <img id="apercu-image-visuel" src="" alt="Aperçu de l'image sélectionnée">
-                    <figcaption id="apercu-image-nom"></figcaption>
-                </figure>
+          <figure id="apercu-image" hidden>
+            <img
+              id="apercu-image-visuel"
+              src=""
+              alt="Aperçu de l'image sélectionnée"
+            />
+            <figcaption id="apercu-image-nom"></figcaption>
+          </figure>
 
-                <p class="message" id="message-form-message"></p>
-            </form>
-        </section>
+          <p class="message" id="message-form-message"></p>
+        </form>
+      </section>
     </main>
 
     <dialog id="dialog-salon" aria-labelledby="titre-dialog-salon">
-        <form class="form" id="form-salon">
-            <h2 id="titre-dialog-salon">Paramètres du salon</h2>
+      <form class="form" id="form-salon">
+        <h2 id="titre-dialog-salon">Paramètres du salon</h2>
 
-            <div>
-                <label for="salon-nom">Nom du salon</label>
-                <input type="text" id="salon-nom" name="nom" maxlength="100" autocomplete="off" required>
-            </div>
+        <div>
+          <label for="salon-nom">Nom du salon</label>
+          <input
+            type="text"
+            id="salon-nom"
+            name="nom"
+            maxlength="100"
+            autocomplete="off"
+            required
+          />
+        </div>
 
-            <fieldset>
-                <legend>Couleurs</legend>
-                <div class="champ-couleur">
-                    <label for="salon-couleur-accent">Accent (boutons, bordures)</label>
-                    <input type="color" id="salon-couleur-accent" name="couleur_accent">
-                </div>
-                <div class="champ-couleur">
-                    <label for="salon-couleur-fond">Fond</label>
-                    <input type="color" id="salon-couleur-fond" name="couleur_fond">
-                </div>
-                <div class="champ-couleur">
-                    <label for="salon-couleur-texte">Texte</label>
-                    <input type="color" id="salon-couleur-texte" name="couleur_texte">
-                </div>
-                <button type="button" id="btn-couleurs-defaut" class="bouton-secondaire">Couleurs par défaut</button>
-            </fieldset>
+        <fieldset>
+          <legend>Couleurs</legend>
+          <div class="champ-couleur">
+            <label for="salon-couleur-accent">Accent (boutons, bordures)</label>
+            <input
+              type="color"
+              id="salon-couleur-accent"
+              name="couleur_accent"
+            />
+          </div>
+          <div class="champ-couleur">
+            <label for="salon-couleur-fond">Fond</label>
+            <input type="color" id="salon-couleur-fond" name="couleur_fond" />
+          </div>
+          <div class="champ-couleur">
+            <label for="salon-couleur-texte">Texte</label>
+            <input type="color" id="salon-couleur-texte" name="couleur_texte" />
+          </div>
+          <button
+            type="button"
+            id="btn-couleurs-defaut"
+            class="bouton-secondaire"
+          >
+            Couleurs par défaut
+          </button>
+        </fieldset>
 
-            <fieldset>
-                <legend>Image de fond</legend>
-                <img id="salon-apercu-fond" alt="Aperçu de l'image de fond" hidden>
-                <label for="salon-image-fond">Choisir une image (PNG, JPEG, GIF ou WebP, 5 Mo max.)</label>
-                <input type="file" id="salon-image-fond" name="image_fond"
-                    accept="image/png, image/jpeg, image/gif, image/webp">
-                <button type="button" id="btn-retirer-fond" class="bouton-secondaire" hidden>Retirer l'image de fond</button>
-            </fieldset>
+        <fieldset>
+          <legend>Image de fond</legend>
+          <img id="salon-apercu-fond" alt="Aperçu de l'image de fond" hidden />
+          <label for="salon-image-fond"
+            >Choisir une image (PNG, JPEG, GIF ou WebP, 5 Mo max.)</label
+          >
+          <input
+            type="file"
+            id="salon-image-fond"
+            name="image_fond"
+            accept="image/png, image/jpeg, image/gif, image/webp"
+          />
+          <button
+            type="button"
+            id="btn-retirer-fond"
+            class="bouton-secondaire"
+            hidden
+          >
+            Retirer l'image de fond
+          </button>
+        </fieldset>
 
-            <div class="actions-dialog">
-                <button type="button" id="btn-annuler-salon" class="bouton-secondaire">Annuler</button>
-                <button type="submit" id="btn-enregistrer-salon">Enregistrer</button>
-            </div>
-            <p class="message" id="salon-message"></p>
-        </form>
+        <div class="actions-dialog">
+          <button
+            type="button"
+            id="btn-annuler-salon"
+            class="bouton-secondaire"
+          >
+            Annuler
+          </button>
+          <button type="submit" id="btn-enregistrer-salon">Enregistrer</button>
+        </div>
+        <p class="message" id="salon-message"></p>
+      </form>
     </dialog>
 
     <dialog id="dialog-inviter" aria-labelledby="titre-dialog-inviter">
-        <form class="form" id="form-inviter">
-            <h2 id="titre-dialog-inviter">Inviter dans le salon</h2>
-            <div>
-                <label for="inviter-pseudo">Pseudo d'un de vos contacts</label>
-                <input type="text" id="inviter-pseudo" name="pseudo" autocomplete="off" required
-                    pattern="[A-Za-z0-9_]{3,30}" title="3 à 30 caractères : lettres sans accent, chiffres ou _">
-            </div>
-            <div class="actions-dialog">
-                <button type="button" id="btn-fermer-inviter" class="bouton-secondaire">Fermer</button>
-                <button type="submit" id="btn-envoyer-invitation">Envoyer l'invitation</button>
-            </div>
-            <p class="message" id="inviter-message"></p>
-        </form>
+      <form class="form" id="form-inviter">
+        <h2 id="titre-dialog-inviter">Inviter dans le salon</h2>
+        <div>
+          <label for="inviter-pseudo">Pseudo d'un de vos contacts</label>
+          <input
+            type="text"
+            id="inviter-pseudo"
+            name="pseudo"
+            autocomplete="off"
+            required
+            pattern="[A-Za-z0-9_]{3,30}"
+            title="3 à 30 caractères : lettres sans accent, chiffres ou _"
+          />
+        </div>
+        <div class="actions-dialog">
+          <button
+            type="button"
+            id="btn-fermer-inviter"
+            class="bouton-secondaire"
+          >
+            Fermer
+          </button>
+          <button type="submit" id="btn-envoyer-invitation">
+            Envoyer l'invitation
+          </button>
+        </div>
+        <p class="message" id="inviter-message"></p>
+      </form>
     </dialog>
     <script src="https://cdn.jsdelivr.net/npm/marked@17.0.6/lib/marked.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.10/dist/purify.min.js"></script>
     <script type="module" src="js/conversation.js"></script>
-</body>
-
+  </body>
 </html>

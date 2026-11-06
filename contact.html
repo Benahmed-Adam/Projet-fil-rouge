@@ -1,79 +1,101 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Gérez vos contacts et vos invitations de groupe">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/contact.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Gérez vos contacts et vos invitations de groupe"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/contact.css" />
     <title>Contacts</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <header>
-        <nav>
-            <a href="conversation.html">Vers conversation</a>
-        </nav>
+      <nav>
+        <a href="conversation.html">Vers conversation</a>
+      </nav>
     </header>
 
     <main>
-        <h1>Contacts</h1>
+      <h1>Contacts</h1>
 
-        <section class="pleine-largeur">
-            <h2>Ajouter un contact</h2>
-            <form class="form form-ajout-contact" id="form-ajout-contact">
-                <label for="ajout-contact-pseudo">Pseudo de la personne</label>
-                <input type="text" id="ajout-contact-pseudo" name="pseudo" autocomplete="off" required
-                    pattern="[A-Za-z0-9_]{3,30}" title="3 à 30 caractères : lettres sans accent, chiffres ou _">
-                <button type="submit" id="btn-ajout-contact">Envoyer la demande</button>
-            </form>
-            <p class="message" id="ajout-contact-message"></p>
-        </section>
+      <section class="pleine-largeur">
+        <h2>Ajouter un contact</h2>
+        <form class="form form-ajout-contact" id="form-ajout-contact">
+          <label for="ajout-contact-pseudo">Pseudo de la personne</label>
+          <input
+            type="text"
+            id="ajout-contact-pseudo"
+            name="pseudo"
+            autocomplete="off"
+            required
+            pattern="[A-Za-z0-9_]{3,30}"
+            title="3 à 30 caractères : lettres sans accent, chiffres ou _"
+          />
+          <button type="submit" id="btn-ajout-contact">
+            Envoyer la demande
+          </button>
+        </form>
+        <p class="message" id="ajout-contact-message"></p>
+      </section>
 
-        <section>
-            <h2>Mes contacts</h2>
-            <ul id="mes-contacts"></ul>
-            <p class="liste-vide" id="mes-contacts-vide" hidden>Vous n'avez pas encore de contact.</p>
-            <p class="message" id="mes-contacts-message"></p>
-        </section>
+      <section>
+        <h2>Mes contacts</h2>
+        <ul id="mes-contacts"></ul>
+        <p class="liste-vide" id="mes-contacts-vide" hidden>
+          Vous n'avez pas encore de contact.
+        </p>
+        <p class="message" id="mes-contacts-message"></p>
+      </section>
 
-        <section>
-            <h2>Demandes de contact reçues</h2>
-            <ul id="demandes-recues"></ul>
-            <p class="liste-vide" id="demandes-recues-vide" hidden>Aucune demande reçue.</p>
-            <p class="message" id="demandes-recues-message"></p>
-        </section>
+      <section>
+        <h2>Demandes de contact reçues</h2>
+        <ul id="demandes-recues"></ul>
+        <p class="liste-vide" id="demandes-recues-vide" hidden>
+          Aucune demande reçue.
+        </p>
+        <p class="message" id="demandes-recues-message"></p>
+      </section>
 
-        <section>
-            <h2>Demandes de contact envoyées</h2>
-            <ul id="demandes-envoyees"></ul>
-            <p class="liste-vide" id="demandes-envoyees-vide" hidden>Aucune demande envoyée.</p>
-            <p class="message" id="demandes-envoyees-message"></p>
-        </section>
+      <section>
+        <h2>Demandes de contact envoyées</h2>
+        <ul id="demandes-envoyees"></ul>
+        <p class="liste-vide" id="demandes-envoyees-vide" hidden>
+          Aucune demande envoyée.
+        </p>
+        <p class="message" id="demandes-envoyees-message"></p>
+      </section>
 
-        <section>
-            <h2>Salons publics</h2>
-            <ul id="salons-publics"></ul>
-            <p class="liste-vide" id="salons-publics-vide" hidden>Aucun salon public à rejoindre.</p>
-            <p class="message" id="salons-publics-message"></p>
-        </section>
+      <section>
+        <h2>Salons publics</h2>
+        <ul id="salons-publics"></ul>
+        <p class="liste-vide" id="salons-publics-vide" hidden>
+          Aucun salon public à rejoindre.
+        </p>
+        <p class="message" id="salons-publics-message"></p>
+      </section>
 
-        <section>
-            <h2>Liste des invitations reçues</h2>
-            <ul id="invitations-recues"></ul>
-            <p class="liste-vide" id="invitations-recues-vide" hidden>Aucune invitation reçue.</p>
-            <p class="message" id="invitations-recues-message"></p>
-        </section>
+      <section>
+        <h2>Liste des invitations reçues</h2>
+        <ul id="invitations-recues"></ul>
+        <p class="liste-vide" id="invitations-recues-vide" hidden>
+          Aucune invitation reçue.
+        </p>
+        <p class="message" id="invitations-recues-message"></p>
+      </section>
 
-        <section>
-            <h2>Liste des invitations envoyées</h2>
-            <ul id="invitations-envoyees"></ul>
-            <p class="liste-vide" id="invitations-envoyees-vide" hidden>Aucune invitation envoyée.</p>
-            <p class="message" id="invitations-envoyees-message"></p>
-        </section>
+      <section>
+        <h2>Liste des invitations envoyées</h2>
+        <ul id="invitations-envoyees"></ul>
+        <p class="liste-vide" id="invitations-envoyees-vide" hidden>
+          Aucune invitation envoyée.
+        </p>
+        <p class="message" id="invitations-envoyees-message"></p>
+      </section>
     </main>
     <script type="module" src="js/contact.js"></script>
-</body>
-
+  </body>
 </html>

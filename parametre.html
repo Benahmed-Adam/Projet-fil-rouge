@@ -1,51 +1,60 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Paramètres du compte : session et suppression">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/parametre.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Paramètres du compte : session et suppression"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/parametre.css" />
     <title>Paramètres</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <header>
-        <nav>
-            <a href="conversation.html">Vers conversation</a>
-        </nav>
+      <nav>
+        <a href="conversation.html">Vers conversation</a>
+      </nav>
     </header>
 
     <main>
-        <h1>Paramètres</h1>
+      <h1>Paramètres</h1>
 
-        <section>
-            <h2>Profil</h2>
-            <form class="form" id="form-pseudo">
-                <div>
-                    <label for="pseudo">Pseudo</label>
-                    <input type="text" name="username" id="pseudo" autocomplete="username" minlength="3"
-                        maxlength="30" pattern="[A-Za-z0-9_]{3,30}"
-                        title="3 à 30 caractères : lettres sans accent, chiffres ou _" required>
-                </div>
-                <button type="submit" id="btn-pseudo">Enregistrer le pseudo</button>
-                <p class="message" id="pseudo-message"></p>
-            </form>
-        </section>
+      <section>
+        <h2>Profil</h2>
+        <form class="form" id="form-pseudo">
+          <div>
+            <label for="pseudo">Pseudo</label>
+            <input
+              type="text"
+              name="username"
+              id="pseudo"
+              autocomplete="username"
+              minlength="3"
+              maxlength="30"
+              pattern="[A-Za-z0-9_]{3,30}"
+              title="3 à 30 caractères : lettres sans accent, chiffres ou _"
+              required
+            />
+          </div>
+          <button type="submit" id="btn-pseudo">Enregistrer le pseudo</button>
+          <p class="message" id="pseudo-message"></p>
+        </form>
+      </section>
 
-        <section>
-            <h2>Session</h2>
-            <button type="button" id="btn-deconnexion">Se déconnecter</button>
-        </section>
+      <section>
+        <h2>Session</h2>
+        <button type="button" id="btn-deconnexion">Se déconnecter</button>
+      </section>
 
-        <section>
-            <h2>Compte</h2>
-            <button type="button" id="btn-suppression">Supprimer le compte</button>
-            <p class="message" id="suppression-message"></p>
-        </section>
+      <section>
+        <h2>Compte</h2>
+        <button type="button" id="btn-suppression">Supprimer le compte</button>
+        <p class="message" id="suppression-message"></p>
+      </section>
     </main>
     <script type="module" src="js/parametre.js"></script>
-</body>
-
+  </body>
 </html>
