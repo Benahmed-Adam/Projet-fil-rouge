@@ -1,3 +1,4 @@
+/* La page occupe exactement l'écran : seules les listes défilent */
 body {
   display: flex;
   flex-direction: column;
@@ -18,6 +19,7 @@ main {
   margin-bottom: 28px;
 }
 
+/* Colonne de gauche : liste des salons et création d'un salon */
 main > aside {
   display: flex;
   flex-direction: column;
@@ -26,6 +28,7 @@ main > aside {
   border: 1px solid #d6d6d6;
 }
 
+/* La liste défile, le formulaire de création reste visible */
 main > aside > nav {
   flex: 1;
   min-height: 0;
@@ -63,6 +66,7 @@ main > aside .nouvelle-conversation .champ-public label {
   margin-bottom: 0;
 }
 
+/* Case à cocher affichée comme un interrupteur */
 main > aside .nouvelle-conversation .champ-public input[type="checkbox"] {
   position: relative;
   width: 46px;
@@ -73,7 +77,6 @@ main > aside .nouvelle-conversation .champ-public input[type="checkbox"] {
   border-radius: 13px;
   appearance: none;
   cursor: pointer;
-  transition: background 0.2s;
 }
 
 main
@@ -89,7 +92,6 @@ main
   height: 20px;
   background: #ffffff;
   border-radius: 50%;
-  transition: transform 0.2s;
 }
 
 main
@@ -130,6 +132,7 @@ main > aside li a:hover {
   text-decoration: none;
 }
 
+/* Zone de discussion. Les variables --salon-* sont posées par conversation.js ; sans elles, les valeurs de secours redonnent le thème normal */
 main > section {
   display: flex;
   flex-direction: column;
@@ -151,6 +154,7 @@ main > section label {
   color: inherit;
 }
 
+/* Titre du salon et ses boutons */
 .entete-salon {
   display: flex;
   flex-wrap: wrap;
@@ -182,6 +186,7 @@ main > section > .form button:hover,
   filter: brightness(1.2);
 }
 
+/* Liste des messages : elle défile seule */
 main > section > ul {
   display: grid;
   align-content: start;
@@ -194,6 +199,7 @@ main > section > ul {
   list-style: none;
 }
 
+/* Légèrement transparent pour laisser voir l'image de fond du salon */
 article.message {
   padding: 14px 16px;
   overflow-wrap: break-word;
@@ -202,6 +208,7 @@ article.message {
   border-left-width: 4px;
 }
 
+/* Les messages des autres à gauche, les siens à droite (la bordure épaisse passe côté droit) */
 main > section > ul > li {
   justify-self: start;
   min-width: 0;
@@ -237,16 +244,19 @@ article.message header p {
   opacity: 0.7;
 }
 
+/* .message (style.css) met le texte en gras : on le retire pour que le gras du Markdown reste visible */
 article.message {
   font-weight: 400;
 }
 
+/* Le CSS écrit dans un message reste dans sa bulle : même position: fixed ne peut pas recouvrir la page */
 .contenu-message {
   position: relative;
   overflow: auto;
   contain: paint;
 }
 
+/* Mise en forme du Markdown dans un message */
 .contenu-message > :first-child {
   margin-top: 0;
 }
@@ -307,6 +317,7 @@ article.message {
   border: 1px solid #d6d6d6;
 }
 
+/* Formulaire d'envoi d'un message */
 main > section > .form {
   grid-template-columns: 1fr auto;
   align-items: end;
@@ -322,6 +333,7 @@ main > section > .form label {
   margin-bottom: -8px;
 }
 
+/* S'agrandit à la main, sans cacher toute la liste des messages */
 main > section > .form textarea {
   min-height: 44px;
   max-height: 200px;
@@ -369,6 +381,7 @@ main > section > .form #apercu-image figcaption {
   font-size: 14px;
 }
 
+/* Images affichées dans un message */
 article.message img {
   display: block;
   max-width: 100%;
@@ -378,6 +391,7 @@ article.message img {
   border: 1px solid #d6d6d6;
 }
 
+/* Fenêtres "Paramètres du salon" et "Inviter" */
 #dialog-salon,
 #dialog-inviter {
   width: min(480px, 92vw);
@@ -414,6 +428,7 @@ article.message img {
   font: inherit;
 }
 
+/* Sélecteurs de couleur du salon */
 .champ-couleur {
   display: flex;
   align-items: center;
@@ -446,6 +461,7 @@ article.message img {
   gap: 10px;
 }
 
+/* Boutons secondaires des fenêtres (Annuler, Fermer...) */
 .bouton-secondaire {
   color: #333333;
   background: #ffffff;
@@ -457,6 +473,7 @@ article.message img {
   border-color: #888888;
 }
 
+/* Téléphone : blocs empilés, la page redéfile et les listes gardent une hauteur maximale */
 @media (max-width: 760px) {
   body {
     height: auto;
@@ -491,6 +508,7 @@ article.message img {
   }
 }
 
+/* Petit téléphone : le bouton d'envoi passe sous le champ */
 @media (max-width: 500px) {
   main > section > .form {
     grid-template-columns: 1fr;

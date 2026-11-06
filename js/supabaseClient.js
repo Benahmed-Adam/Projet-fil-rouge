@@ -5,6 +5,7 @@ const SUPABASE_KEY = "sb_publishable_cYjf8o1KTzn53rZxJzNr8g_DepqXEEF";
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// Indique si un utilisateur est connecté
 export async function isSessionActive() {
   const { data, error } = await supabase.auth.getSession();
 
@@ -15,6 +16,7 @@ export async function isSessionActive() {
   return true;
 }
 
+// Utilisateur connecté, récupéré au chargement de la page (null si personne n'est connecté)
 const {
   data: { user },
 } = await supabase.auth.getUser();

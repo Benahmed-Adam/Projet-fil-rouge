@@ -1,6 +1,7 @@
 import { supabase, isSessionActive, user } from "./supabaseClient.js";
 import { setMessage, setLoading } from "./ui.js";
 
+// Page réservée aux utilisateurs connectés
 if (!(await isSessionActive()) || !user) {
   window.location.href = "index.html";
 }
@@ -12,6 +13,7 @@ const champPseudo = document.getElementById("pseudo");
 const btnPseudo = document.getElementById("btn-pseudo");
 const pseudoMessage = document.getElementById("pseudo-message");
 
+// Pré-remplit le champ avec le pseudo actuel
 const { data: profil } = await supabase
   .from("profiles")
   .select("username")
@@ -19,6 +21,7 @@ const { data: profil } = await supabase
   .single();
 champPseudo.value = profil?.username ?? "";
 
+// Changement de pseudo
 formPseudo.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -57,6 +60,7 @@ formPseudo.addEventListener("submit", async (e) => {
   setMessage(pseudoMessage, "Pseudo mis à jour.", "success");
 });
 
+// Déconnexion de cet appareil uniquement
 document
   .getElementById("btn-deconnexion")
   .addEventListener("click", async () => {
@@ -64,6 +68,7 @@ document
     window.location.href = "index.html";
   });
 
+// Suppression du compte : passe par une edge function, car seule la service_role gardée côté serveur peut supprimer un compte
 const btnSuppression = document.getElementById("btn-suppression");
 const suppressionMessage = document.getElementById("suppression-message");
 

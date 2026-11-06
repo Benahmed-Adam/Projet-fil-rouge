@@ -15,6 +15,7 @@ body > header p {
   color: #666666;
 }
 
+/* Connexion, inscription et récupération sur trois colonnes */
 #main-index {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -40,6 +41,7 @@ body > header p {
   gap: 3px;
 }
 
+/* Boutons alignés en bas de chaque formulaire */
 #main-index button {
   width: 100%;
   margin-top: auto;
@@ -52,12 +54,14 @@ label[for="stay_connected"] {
   font-weight: normal;
 }
 
+/* Écrans moyens */
 @media (max-width: 850px) {
   #main-index {
     grid-template-columns: 1fr 1fr;
   }
 }
 
+/* Téléphone */
 @media (max-width: 600px) {
   body > header {
     padding-top: 32px;

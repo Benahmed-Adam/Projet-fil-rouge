@@ -1,8 +1,7 @@
 import { supabase, isSessionActive, user } from "./supabaseClient.js";
 import { setMessage, setLoading } from "./ui.js";
 
-const NOM_MAX_LENGTH = 100;
-
+// Éléments de la page
 const conversationName = document.getElementById("conversation-name");
 const messagesList = document.getElementById("messages-list");
 const conversationsList = document.getElementById("conversations-list");
@@ -61,28 +60,31 @@ const PSEUDO_REGEX = /^[A-Za-z0-9_]{3,30}$/;
 const btnQuitterSalon = document.getElementById("btn-quitter-salon");
 const btnSupprimerSalon = document.getElementById("btn-supprimer-salon");
 
-const MESSAGES_LIMITE = 100;
-
+// Couleurs du thème normal : une couleur égale à sa valeur par défaut n'est pas enregistrée
 const COULEURS_DEFAUT = {
   couleur_accent: "#202020",
   couleur_fond: "#ffffff",
   couleur_texte: "#171717",
 };
 const COULEUR_REGEX = /^#[0-9a-fA-F]{6}$/;
+// Clé de channels.style -> variable CSS utilisée par conversation.css
 const VARIABLES_COULEURS = {
   couleur_accent: "--salon-accent",
   couleur_fond: "--salon-fond",
   couleur_texte: "--salon-texte",
 };
 
+// Mêmes formats que le bucket message-images
 const EXTENSIONS_IMAGE = {
   "image/png": "png",
   "image/jpeg": "jpg",
   "image/gif": "gif",
   "image/webp": "webp",
 };
+// Chemin d'une image du bucket, écrit ![image](chemin) dans le texte du message : <id du salon>/<uuid>.<extension>
 const CHEMIN_IMAGE_REGEX = /^[0-9a-f-]{36}\/[0-9a-f-]{36}\.(png|jpg|gif|webp)$/;
 
+// URL signées déjà obtenues, par chemin d'image
 const urlsSignees = new Map();
 let urlApercu = null;
 let urlApercuFond = null;
@@ -91,9 +93,11 @@ let fondRetire = false;
 let conversations = [];
 let currentChannelId = null;
 let abonnementMessages = null;
+// Ids des messages déjà affichés : un message envoyé revient aussi par le temps réel
 const messagesAffiches = new Set();
 const pseudos = new Map();
 
+// Bucket privé : on demande une URL temporaire (1 h) pour afficher une image, la RLS vérifie qu'on est membre du salon
 async function urlSignee(chemin) {
   if (!urlsSignees.has(chemin)) {
     const { data, error } = await supabase.storage
@@ -105,6 +109,7 @@ async function urlSignee(chemin) {
   return urlsSignees.get(chemin);
 }
 
+// Donne leur URL signée aux images du bucket contenues dans un message
 async function afficherImages(contenu) {
   for (const img of contenu.querySelectorAll("img[data-chemin]")) {
     const url = await urlSignee(img.dataset.chemin);
@@ -116,6 +121,7 @@ async function afficherImages(contenu) {
   }
 }
 
+// Markdown/HTML. Ce HTML vient d'autres utilisateurs : DOMPurify en retire tout le JavaScript. <style> s'appliquerait à toute la page et <form> permettrait un faux formulaire de connexion
 function markdownEnHtml(texte) {
   const html = marked.parse(texte, { gfm: true, breaks: true });
   return DOMPurify.sanitize(html, { FORBID_TAGS: ["style", "form"] });
@@ -164,11 +170,13 @@ function formaterDate(iso) {
   return `à ${heure} le ${date.toLocaleDateString("fr-FR")}`;
 }
 
+// Ajoute un message en bas de la liste, sauf s'il est déjà affiché
 function afficherMessage(message) {
   if (messagesAffiches.has(message.id)) return;
   messagesAffiches.add(message.id);
 
   const li = document.createElement("li");
+  // Ses propres messages sont alignés à droite
   if (message.user_id === user.id) {
     li.className = "message-envoye";
   }
@@ -188,6 +196,7 @@ function afficherMessage(message) {
   const contenu = document.createElement("div");
   contenu.className = "contenu-message";
   contenu.append(...construireContenu(message.content ?? ""));
+  // Une image change la hauteur du message une fois chargée : on reste en bas de la liste
   for (const img of contenu.querySelectorAll("img")) {
     img.addEventListener("load", () => {
       messagesList.scrollTop = messagesList.scrollHeight;
@@ -201,6 +210,7 @@ function afficherMessage(message) {
   messagesList.scrollTop = messagesList.scrollHeight;
 }
 
+// Récupère le pseudo de l'auteur d'un message reçu en temps réel
 async function chargerPseudo(userId) {
   if (pseudos.has(userId)) return;
 
@@ -216,12 +226,13 @@ async function loadMessages(channelId) {
   messagesList.replaceChildren();
   messagesAffiches.clear();
 
+  // Les plus récents d'abord pour la limite, puis remis dans l'ordre chronologique
   const { data, error } = await supabase
     .from("messages")
     .select("id, user_id, content, created_at, profiles(username)")
     .eq("channel_id", channelId)
     .order("created_at", { ascending: false })
-    .limit(MESSAGES_LIMITE);
+    .limit(100);
 
   if (channelId !== currentChannelId) return;
 
@@ -240,6 +251,7 @@ async function loadMessages(channelId) {
   }
 }
 
+// Applique le style du salon à la zone des messages via des variables CSS
 async function appliquerStyle(channel) {
   const style = channel.style ?? {};
 
@@ -263,6 +275,7 @@ async function appliquerStyle(channel) {
   }
 }
 
+// Met à jour un salon modifié
 function mettreAJourSalon(salon) {
   const channel = conversations.find((c) => c.id === salon.id);
   if (!channel) return;
@@ -277,6 +290,7 @@ function mettreAJourSalon(salon) {
   }
 }
 
+// Temps réel : nouveaux messages et modifications du salon ouvert
 function ecouterMessages(channelId) {
   if (abonnementMessages) {
     supabase.removeChannel(abonnementMessages);
@@ -319,7 +333,9 @@ async function selectConversation(channelId) {
   currentChannelId = channel.id;
   conversationName.textContent = channel.name;
   btnParametresSalon.hidden = !["owner", "admin"].includes(channel.role);
+  // Tout membre peut inviter
   btnInviter.hidden = false;
+  // Le propriétaire ne peut pas quitter son salon, seulement le supprimer
   btnQuitterSalon.hidden = channel.role === "owner";
   btnSupprimerSalon.hidden = channel.role !== "owner";
   setMessage(messageFormMessage, "", null);
@@ -330,6 +346,7 @@ async function selectConversation(channelId) {
   await loadMessages(channel.id);
 }
 
+// Plus aucun salon ouvert : remet la zone de discussion à vide
 function viderConversation() {
   currentChannelId = null;
   if (abonnementMessages) {
@@ -351,6 +368,7 @@ function viderConversation() {
   appliquerStyle({});
 }
 
+// Retire un salon de la liste et ouvre le suivant
 async function retirerConversation(channelId) {
   conversations = conversations.filter((c) => c.id !== channelId);
 
@@ -451,6 +469,7 @@ function libererApercuFond() {
   urlApercuFond = null;
 }
 
+// Ouvre la fenêtre des paramètres, pré-remplie avec le salon actuel
 async function ouvrirParametresSalon() {
   const channel = conversations.find((c) => c.id === currentChannelId);
   if (!channel) return;
@@ -505,6 +524,7 @@ function couleursParDefaut() {
   }
 }
 
+// Fonctionnalitée supplémentaire : enregistre le nom, les couleurs et l'image de fond du salon
 async function enregistrerSalon(e) {
   e.preventDefault();
 
@@ -514,10 +534,10 @@ async function enregistrerSalon(e) {
   const name = champSalonNom.value.trim();
   setMessage(salonMessage, "", null);
 
-  if (!name || name.length > NOM_MAX_LENGTH) {
+  if (!name || name.length > 100) {
     setMessage(
       salonMessage,
-      `Le nom doit faire entre 1 et ${NOM_MAX_LENGTH} caractères.`,
+      `Le nom doit faire entre 1 et 100 caractères.`,
       "error",
     );
     champSalonNom.focus();
@@ -545,6 +565,7 @@ async function enregistrerSalon(e) {
   try {
     let nouveauFond = null;
 
+    // L'image de fond va dans le dossier du salon, comme les images des messages
     if (fichier) {
       nouveauFond = `${channel.id}/${crypto.randomUUID()}.${EXTENSIONS_IMAGE[fichier.type]}`;
       const { error: erreurEnvoi } = await supabase.storage
@@ -591,6 +612,7 @@ async function enregistrerSalon(e) {
   }
 }
 
+// Renvoie un message d'erreur si le bucket refuserait ce fichier, sinon null
 function verifierImage(fichier) {
   if (!EXTENSIONS_IMAGE[fichier.type])
     return "Format non accepté : PNG, JPEG, GIF ou WebP uniquement.";
@@ -608,6 +630,7 @@ function retirerImage() {
   boutonRetirerImage.hidden = true;
 }
 
+// Vérifie l'image choisie et affiche son aperçu
 function onImageChoisie() {
   const fichier = champImage.files[0];
   setMessage(messageFormMessage, "", null);
@@ -631,6 +654,7 @@ function onImageChoisie() {
   boutonRetirerImage.hidden = false;
 }
 
+// Envoie un message : texte, image ou les deux
 async function envoyerMessage(e) {
   e.preventDefault();
 
@@ -665,6 +689,7 @@ async function envoyerMessage(e) {
     let content = texte;
     let chemin = null;
 
+    // L'image est d'abord envoyée dans le dossier du salon, puis son chemin est ajouté au texte en Markdown
     if (fichier) {
       chemin = `${currentChannelId}/${crypto.randomUUID()}.${EXTENSIONS_IMAGE[fichier.type]}`;
       const { error: erreurEnvoi } = await supabase.storage
@@ -718,6 +743,7 @@ function ouvrirInviter() {
   dialogInviter.showModal();
 }
 
+// Invite un contact dans le salon ouvert
 async function envoyerInvitation(e) {
   e.preventDefault();
 
@@ -736,6 +762,7 @@ async function envoyerInvitation(e) {
   setLoading(btnEnvoyerInvitation, true, "Envoi…");
 
   try {
+    // ilike : sans tenir compte des majuscules ; _ est un joker en SQL, on l'échappe
     const { data: profil, error: erreurProfil } = await supabase
       .from("profiles")
       .select("id, username")
@@ -825,6 +852,7 @@ async function envoyerInvitation(e) {
   }
 }
 
+// Charge les salons dont on est membre et ouvre le premier
 async function loadConversations() {
   const { data, error } = await supabase
     .from("channels")
@@ -841,12 +869,14 @@ async function loadConversations() {
     return;
   }
 
+  // role : notre rôle dans le salon, pour afficher les bons boutons
   conversations = data.map(({ channel_members, ...channel }) => ({
     ...channel,
     role: channel_members[0]?.role,
   }));
   renderConversations();
 
+  // conversation.html?salon=<id> (lien depuis la page contacts.html) ouvre ce salon
   const salonDemande = new URLSearchParams(window.location.search).get("salon");
   const salonAOuvrir =
     conversations.find((c) => c.id === salonDemande) ?? conversations[0];
@@ -872,10 +902,10 @@ async function creerConversation(e) {
     return;
   }
 
-  if (name.length > NOM_MAX_LENGTH) {
+  if (name.length > 100) {
     setMessage(
       messageNouvelleConversation,
-      `Le nom ne peut pas dépasser ${NOM_MAX_LENGTH} caractères.`,
+      `Le nom ne peut pas dépasser 100 caractères.`,
       "error",
     );
     champNouvelleConversation.focus();
@@ -914,6 +944,7 @@ async function creerConversation(e) {
   }
 }
 
+// Un seul écouteur sur la liste pour tous les liens de salons
 function onConversationClick(e) {
   const link = e.target.closest("a[data-channel-id]");
   if (!link) return;
@@ -922,6 +953,7 @@ function onConversationClick(e) {
   selectConversation(link.dataset.channelId);
 }
 
+// Démarrage : page réservée aux utilisateurs connectés
 if (!(await isSessionActive()) || !user) {
   window.location.replace("index.html");
 } else {
@@ -942,6 +974,7 @@ if (!(await isSessionActive()) || !user) {
   btnCouleursDefaut.addEventListener("click", couleursParDefaut);
   btnAnnulerSalon.addEventListener("click", () => dialogSalon.close());
   dialogSalon.addEventListener("close", libererApercuFond);
+  // Entrée envoie, Maj + Entrée va à la ligne
   champMessage.addEventListener("keydown", (e) => {
     if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
       e.preventDefault();

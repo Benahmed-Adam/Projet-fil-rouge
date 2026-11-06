@@ -1,3 +1,4 @@
+// Affiche un texte dans une zone de message, en vert (success) ou en rouge (error)
 export function setMessage(element, texte, type) {
   if (!element) return;
 
@@ -9,6 +10,7 @@ export function setMessage(element, texte, type) {
   }
 }
 
+// Désactive un bouton pendant une opération avec un texte d'attente, puis lui rend son libellé
 export function setLoading(
   bouton,
   actif,

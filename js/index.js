@@ -1,10 +1,12 @@
 import { supabase, isSessionActive } from "./supabaseClient.js";
 import { setMessage, setLoading } from "./ui.js";
 
+// Déjà connecté : pas besoin de cette page
 if (await isSessionActive()) {
   window.location.href = "conversation.html";
 }
 
+// Adresses complètes vers lesquelles renvoient les emails de confirmation et de réinitialisation
 const URL_CONVERSATION = new URL("conversation.html", window.location.href)
   .href;
 const URL_REINITIALISATION = new URL(
@@ -12,6 +14,7 @@ const URL_REINITIALISATION = new URL(
   window.location.href,
 ).href;
 
+// Connexion
 document
   .getElementById("form-connexion")
   .addEventListener("submit", async (e) => {
@@ -39,6 +42,7 @@ document
     window.location.href = "conversation.html";
   });
 
+// Inscription
 document
   .getElementById("form-inscription")
   .addEventListener("submit", async (e) => {
@@ -78,6 +82,7 @@ document
       return;
     }
 
+    // Session présente : compte utilisable tout de suite ; sinon il faut d'abord confirmer l'email
     if (data.session) {
       setMessage(message, "Compte créé, vous êtes connecté.", "success");
       window.location.href = "conversation.html";
@@ -91,6 +96,7 @@ document
     );
   });
 
+// Récupération du mot de passe : envoie un email avec un lien vers reset-password.html
 const formRecuperation = document.getElementById("form-recuperation");
 
 formRecuperation.addEventListener("submit", async (e) => {

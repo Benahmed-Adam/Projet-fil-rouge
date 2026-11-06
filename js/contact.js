@@ -1,6 +1,7 @@
 import { supabase, isSessionActive, user } from "./supabaseClient.js";
 import { setMessage, setLoading } from "./ui.js";
 
+// Éléments de la page
 const listeSalonsPublics = document.getElementById("salons-publics");
 const videSalonsPublics = document.getElementById("salons-publics-vide");
 const messageSalonsPublics = document.getElementById("salons-publics-message");
@@ -36,6 +37,7 @@ const messageDemandesEnvoyees = document.getElementById(
 
 const PSEUDO_REGEX = /^[A-Za-z0-9_]{3,30}$/;
 
+// Message de réussite suivi d'un lien qui ouvre directement le salon
 function messageAvecLien(element, texte, salonId) {
   setMessage(element, `${texte} `, "success");
   const lien = document.createElement("a");
@@ -44,6 +46,7 @@ function messageAvecLien(element, texte, salonId) {
   element.append(lien);
 }
 
+// Crée un élément de liste : des lignes "libellé : valeur" et des boutons (data-action sur chacun)
 function creerElement(id, lignes, boutons) {
   const li = document.createElement("li");
   li.dataset.id = id;
@@ -79,6 +82,7 @@ function afficherListe(liste, vide, elements) {
   vide.hidden = elements.length > 0;
 }
 
+// Salons publics dont on n'est pas encore membre
 async function chargerSalonsPublics() {
   const { data: membres, error: erreurMembres } = await supabase
     .from("channel_members")
@@ -118,6 +122,7 @@ async function rejoindreSalon(li, bouton) {
   setMessage(messageSalonsPublics, "", null);
   setLoading(bouton, true, "…");
 
+  // user_id vaut auth.uid() par défaut, la RLS n'accepte que les salons publics
   const { error } = await supabase
     .from("channel_members")
     .insert({ channel_id: li.dataset.id });
@@ -140,6 +145,7 @@ async function rejoindreSalon(li, bouton) {
   );
 }
 
+// Invitations en attente et non expirées
 async function chargerInvitationsRecues() {
   const { data, error } = await supabase
     .from("channel_invitations")
@@ -201,6 +207,7 @@ async function accepterInvitation(li, bouton) {
   messageAvecLien(messageRecues, "Invitation acceptée.", li.dataset.salon);
 }
 
+// Refuser (invité) ou annuler (inviteur) : seul le statut change, la RLS vérifie qui a le droit
 async function changerStatut(
   li,
   bouton,
@@ -262,7 +269,9 @@ async function chargerInvitationsEnvoyees() {
   afficherListe(listeEnvoyees, videEnvoyees, elements);
 }
 
+// Une ligne de contacts = une demande ou un contact, dans un sens ou dans l'autre. La RLS ne renvoie que nos lignes
 async function chargerContacts() {
+  // Deux clés étrangères mènent à profiles : le nom de la clé indique laquelle suivre pour chaque pseudo
   const { data, error } = await supabase
     .from("contacts")
     .select(
@@ -317,6 +326,7 @@ async function chargerContacts() {
       recues.push(li);
     }
 
+    // Clé de la ligne, pour la modifier ou la supprimer ensuite
     li.dataset.requester = ligne.requester_id;
     li.dataset.addressee = ligne.addressee_id;
     li.dataset.pseudo = autre;
@@ -327,6 +337,7 @@ async function chargerContacts() {
   afficherListe(listeDemandesEnvoyees, videDemandesEnvoyees, envoyees);
 }
 
+// Envoie une demande de contact à partir d'un pseudo
 async function envoyerDemandeContact(e) {
   e.preventDefault();
 
@@ -345,6 +356,7 @@ async function envoyerDemandeContact(e) {
   setLoading(btnAjoutContact, true, "Envoi…");
 
   try {
+    // ilike : sans tenir compte des majuscules ; _ est un joker en SQL, on l'échappe
     const { data: profil, error: erreurProfil } = await supabase
       .from("profiles")
       .select("id, username")
@@ -363,7 +375,7 @@ async function envoyerDemandeContact(e) {
     if (!profil) {
       setMessage(
         messageAjoutContact,
-        `Aucun utilisateur ne s'appelle « ${pseudo} ».`,
+        `Aucun utilisateur ne s'appelle " ${pseudo} ".`,
         "error",
       );
       return;
@@ -403,6 +415,7 @@ async function envoyerDemandeContact(e) {
   }
 }
 
+// Cible la ligne de contacts d'un élément de la liste
 function filtreContact(requete, li) {
   return requete
     .eq("requester_id", li.dataset.requester)
@@ -436,6 +449,7 @@ async function accepterContact(li, bouton) {
   await chargerContacts();
 }
 
+// Refuser une demande, annuler la sienne ou retirer un contact : dans les trois cas la ligne est supprimée
 async function supprimerContact(
   li,
   bouton,
@@ -459,6 +473,7 @@ async function supprimerContact(
   setMessage(message, texteReussite, "success");
 }
 
+// Un seul écouteur par liste : data-action indique l'action à lancer
 function onClicListe(e) {
   const bouton = e.target.closest("button[data-action]");
   if (!bouton) return;
@@ -531,6 +546,7 @@ function onClicListe(e) {
   }
 }
 
+// Démarrage : page réservée aux utilisateurs connectés
 if (!(await isSessionActive()) || !user) {
   window.location.replace("index.html");
 } else {

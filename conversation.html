@@ -21,6 +21,7 @@
     </header>
 
     <main>
+      <!-- Colonne de gauche : liste des salons et création d'un salon -->
       <aside>
         <h2>Liste des conversations</h2>
         <nav>
@@ -56,11 +57,13 @@
         </form>
       </aside>
 
+      <!-- Zone de discussion du salon ouvert -->
       <section>
         <div class="entete-salon">
           <h1>
             Messages de la conversation : <span id="conversation-name"></span>
           </h1>
+          <!-- Boutons affichés selon notre rôle dans le salon -->
           <div class="boutons-salon">
             <button type="button" id="btn-inviter" hidden>Inviter</button>
             <button type="button" id="btn-parametres-salon" hidden>
@@ -74,8 +77,10 @@
             </button>
           </div>
         </div>
+        <!-- Messages ajoutés par conversation.js -->
         <ul id="messages-list"></ul>
 
+        <!-- Envoi d'un message : texte, image ou les deux -->
         <form class="form" id="form-nouveau-message">
           <label for="nouveau-message">Le message :</label>
           <textarea
@@ -117,6 +122,7 @@
       </section>
     </main>
 
+    <!-- Fonctionnalité supplémentaire : personnalisation du salon -->
     <dialog id="dialog-salon" aria-labelledby="titre-dialog-salon">
       <form class="form" id="form-salon">
         <h2 id="titre-dialog-salon">Paramètres du salon</h2>
@@ -196,6 +202,7 @@
       </form>
     </dialog>
 
+    <!-- Invitation d'un contact dans le salon -->
     <dialog id="dialog-inviter" aria-labelledby="titre-dialog-inviter">
       <form class="form" id="form-inviter">
         <h2 id="titre-dialog-inviter">Inviter dans le salon</h2>
@@ -226,6 +233,7 @@
         <p class="message" id="inviter-message"></p>
       </form>
     </dialog>
+    <!-- marked : Markdown vers HTML ; DOMPurify : retire le JavaScript de ce HTML -->
     <script src="https://cdn.jsdelivr.net/npm/marked@17.0.6/lib/marked.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.10/dist/purify.min.js"></script>
     <script type="module" src="js/conversation.js"></script>
