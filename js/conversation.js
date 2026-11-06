@@ -339,7 +339,14 @@ function viderConversation() {
   messagesList.replaceChildren();
   messagesAffiches.clear();
   conversationName.textContent = "";
-  
+  for (const bouton of [
+    btnInviter,
+    btnParametresSalon,
+    btnQuitterSalon,
+    btnSupprimerSalon,
+  ]) {
+    bouton.hidden = true;
+  }
   renderConversations();
   appliquerStyle({});
 }
