@@ -13,10 +13,11 @@ main {
   align-items: stretch;
   flex: 1;
   min-height: 0;
-  gap: 22px;
-  width: 90%;
-  margin-top: 28px;
-  margin-bottom: 28px;
+  gap: 16px;
+  width: 94%;
+  max-width: 1400px;
+  margin-top: 16px;
+  margin-bottom: 16px;
 }
 
 /* Colonne de gauche : liste des salons et création d'un salon */
@@ -153,7 +154,7 @@ main > section {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  padding: 24px;
+  padding: 16px 20px;
   color: var(--salon-texte, #171717);
   background-color: var(--salon-fond, #ffffff);
   background-image: var(--salon-image, none);
@@ -162,8 +163,9 @@ main > section {
 }
 
 main > section h1 {
-  margin-bottom: 20px;
-  font-size: 25px;
+  margin-bottom: 0;
+  font-size: 22px;
+  overflow-wrap: anywhere;
 }
 
 main > section label {
@@ -176,18 +178,20 @@ main > section label {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 10px 16px;
-  margin-bottom: 20px;
-}
-
-.entete-salon h1 {
-  margin-bottom: 0;
+  gap: 8px 16px;
+  margin-bottom: 12px;
 }
 
 .boutons-salon {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.boutons-salon button {
+  min-height: 34px;
+  padding: 4px 12px;
+  font-size: 14px;
 }
 
 main > section > .form button,
@@ -200,6 +204,18 @@ main > section > .form button:hover,
 .boutons-salon button:hover {
   background: var(--salon-accent, #444444);
   filter: brightness(1.2);
+}
+
+.boutons-salon button.bouton-danger {
+  color: #b00020;
+  background: #ffffff;
+  border-color: #b00020;
+}
+
+.boutons-salon button.bouton-danger:hover {
+  color: #ffffff;
+  background: #b00020;
+  filter: none;
 }
 
 /* Texte affiché à la place de la discussion quand on n'a aucun salon */
@@ -231,7 +247,7 @@ main > section > ul {
   min-height: 0;
   overflow-y: auto;
   gap: 12px;
-  margin: 0 0 22px;
+  margin: 0 0 12px;
   padding: 0;
   list-style: none;
 }
@@ -256,7 +272,13 @@ main > section > ul > li.message-envoye {
   justify-self: end;
 }
 
+/* Ses propres bulles sont teintées avec la couleur d'accent du salon */
 main > section > ul > li.message-envoye article.message {
+  background: color-mix(
+    in srgb,
+    var(--salon-accent, #202020) 14%,
+    var(--salon-fond, #ffffff)
+  );
   border-left-width: 1px;
   border-right-width: 4px;
 }
@@ -362,16 +384,20 @@ article.message {
 main > section > .form {
   grid-template-columns: 1fr auto;
   align-items: end;
-  gap: 10px 12px;
+  gap: 8px 12px;
   margin-top: auto;
-  padding: 14px;
+  padding: 10px;
   background: color-mix(in srgb, var(--salon-fond, #ffffff) 90%, transparent);
   border-top: 1px solid #d6d6d6;
 }
 
+/* Le texte d'aide et le bouton suffisent : libellés gardés pour les lecteurs d'écran seulement */
 main > section > .form label {
-  grid-column: 1 / -1;
-  margin-bottom: -8px;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
 }
 
 /* Fond blanc fixe : le rouge et le vert des messages restent lisibles sur tous les thèmes */
@@ -406,8 +432,7 @@ main > section > .form .champ-image label {
 main > section > .form .champ-image input[type="file"] {
   flex: 1 1 200px;
   min-width: 0;
-  min-height: 44px;
-  padding: 8px 10px;
+  padding: 4px 8px;
   color: #171717;
   font: inherit;
   background: #ffffff;
@@ -526,11 +551,6 @@ article.message img {
 
 /* Téléphone et tablette : blocs empilés dans la hauteur de l'écran, seuls les messages défilent */
 @media (max-width: 1000px) {
-  body > header {
-    min-height: 0;
-    padding: 10px 4%;
-  }
-
   main {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr);
@@ -595,12 +615,6 @@ article.message img {
     margin-bottom: 8px;
   }
 
-  .boutons-salon button {
-    min-height: 34px;
-    padding: 4px 10px;
-    font-size: 14px;
-  }
-
   main > section > ul {
     margin-bottom: 8px;
   }
@@ -634,14 +648,5 @@ article.message img {
 @media (max-width: 500px) {
   main > section > .form {
     grid-template-columns: 1fr;
-  }
-
-  /* Le texte d'aide et le bouton suffisent : libellés gardés pour les lecteurs d'écran seulement */
-  main > section > .form label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
   }
 }

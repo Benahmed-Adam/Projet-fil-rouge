@@ -3,20 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="media/icon.ico" />
     <meta
       name="description"
       content="Liste des conversations et messages échangés"
     />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/conversation.css" />
-    <title>Conversationner</title>
+    <title>Conversations</title>
   </head>
 
   <body>
     <header>
       <nav>
-        <a href="contact.html">Vers les contacts</a>
-        <a href="parametre.html">Vers les paramètres</a>
+        <span class="marque">Messagerie de qualité</span>
+        <a href="conversation.html" aria-current="page">Conversations</a>
+        <a href="contact.html">Contacts</a>
+        <a href="parametre.html">Paramètres</a>
       </nav>
     </header>
 
@@ -29,43 +32,43 @@
         </nav>
         <!-- Replié sur téléphone et tablette pour laisser la place aux messages (voir conversation.js) -->
         <details id="bloc-nouvelle-conversation" open>
-        <summary>Créer une nouvelle conversation</summary>
-        <form
-          class="form nouvelle-conversation"
-          id="form-nouvelle-conversation"
-        >
-          <label for="nouvelle_conversation_nom">Nom de la conversation</label>
-          <input
-            type="text"
-            id="nouvelle_conversation_nom"
-            name="salon"
-            placeholder="Ex. : Salon de qualité"
-            maxlength="60"
-            autocomplete="off"
-            required
-          />
-          <div class="champ-public">
-            <label for="salon-public">Salon public</label>
+          <summary>Créer une nouvelle conversation</summary>
+          <form
+            class="form nouvelle-conversation"
+            id="form-nouvelle-conversation"
+          >
+            <label for="nouvelle_conversation_nom"
+              >Nom de la conversation</label
+            >
             <input
-              type="checkbox"
-              id="salon-public"
-              name="public"
-              role="switch"
-              checked
+              type="text"
+              id="nouvelle_conversation_nom"
+              name="salon"
+              placeholder="Ex. : Salon de qualité"
+              maxlength="100"
+              autocomplete="off"
+              required
             />
-          </div>
-          <button type="submit" id="nouvelle_conversation">Créer</button>
-          <p class="message" id="nouvelle-conversation-message"></p>
-        </form>
+            <div class="champ-public">
+              <label for="salon-public">Salon public</label>
+              <input
+                type="checkbox"
+                id="salon-public"
+                name="public"
+                role="switch"
+                checked
+              />
+            </div>
+            <button type="submit" id="nouvelle_conversation">Créer</button>
+            <p class="message" id="nouvelle-conversation-message"></p>
+          </form>
         </details>
       </aside>
 
       <!-- Zone de discussion du salon ouvert -->
       <section>
         <div class="entete-salon">
-          <h1>
-            Messages de la conversation : <span id="conversation-name"></span>
-          </h1>
+          <h1 id="conversation-name"></h1>
           <!-- Boutons affichés selon notre rôle dans le salon -->
           <div class="boutons-salon">
             <button type="button" id="btn-inviter" hidden>Inviter</button>
@@ -75,7 +78,12 @@
             <button type="button" id="btn-quitter-salon" hidden>
               Quitter le salon
             </button>
-            <button type="button" id="btn-supprimer-salon" hidden>
+            <button
+              type="button"
+              id="btn-supprimer-salon"
+              class="bouton-danger"
+              hidden
+            >
               Supprimer le salon
             </button>
           </div>

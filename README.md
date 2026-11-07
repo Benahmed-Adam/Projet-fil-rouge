@@ -19,7 +19,7 @@ Après avoir créé un compte, l'utilisateur peut créer des salons publics ou p
 
 ### Fonctionnalité supplémentaire : personnaliser le salon
 
-Le propriétaire d'un salon peut modifier son nom, ses couleurs (accent, fond, texte) et son image de fond depuis le bouton « Paramètres du salon ». Le changement s'applique en direct chez tous les membres.
+Le propriétaire d'un salon peut modifier son nom, ses couleurs (accent, fond, texte) et son image de fond depuis le bouton " Paramètres du salon ". Le changement s'applique en direct chez tous les membres.
 
 ## Technologies
 

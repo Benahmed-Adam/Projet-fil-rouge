@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="media/icon.ico" />
     <meta
       name="description"
       content="Paramètres du compte : session et suppression"
@@ -15,7 +16,10 @@
   <body>
     <header>
       <nav>
-        <a href="conversation.html">Vers conversation</a>
+        <span class="marque">Messagerie de qualité</span>
+        <a href="conversation.html">Conversations</a>
+        <a href="contact.html">Contacts</a>
+        <a href="parametre.html" aria-current="page">Paramètres</a>
       </nav>
     </header>
 
@@ -54,7 +58,9 @@
       <!-- Suppression définitive du compte -->
       <section>
         <h2>Compte</h2>
-        <button type="button" id="btn-suppression">Supprimer le compte</button>
+        <button type="button" id="btn-suppression" class="bouton-danger">
+          Supprimer le compte
+        </button>
         <p class="message" id="suppression-message"></p>
       </section>
     </main>

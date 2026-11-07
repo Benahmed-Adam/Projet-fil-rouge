@@ -2,7 +2,7 @@
 main {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  align-items: start;
+  align-items: stretch;
   gap: 20px;
 }
 
@@ -11,24 +11,21 @@ main > h1 {
   margin-bottom: 0;
 }
 
-main > section {
-  min-height: 160px;
+/* Profil sur toute la largeur, Session et Compte côte à côte */
+main > section:first-of-type {
+  grid-column: 1 / -1;
+}
+
+#form-pseudo {
+  max-width: 480px;
+}
+
+#btn-pseudo {
+  justify-self: start;
 }
 
 main > section button {
   min-width: 170px;
-}
-
-/* Suppression du compte : bouton volontairement discret */
-main > section:last-of-type button {
-  color: #333333;
-  background: #ffffff;
-  border-color: #bdbdbd;
-}
-
-main > section:last-of-type button:hover {
-  background: #eeeeee;
-  border-color: #888888;
 }
 
 /* Téléphone : une seule colonne */

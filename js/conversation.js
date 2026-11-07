@@ -210,7 +210,10 @@ function afficherMessage(message) {
 
   const header = document.createElement("header");
   const auteur = document.createElement("h2");
-  auteur.textContent = `Envoyé par : ${pseudos.get(message.user_id) ?? "Inconnu"}`;
+  auteur.textContent =
+    message.user_id === user.id
+      ? "Vous"
+      : (pseudos.get(message.user_id) ?? "Inconnu");
   const p = document.createElement("p");
   const time = document.createElement("time");
   time.dateTime = message.created_at;
@@ -404,9 +407,14 @@ function ecouterTousLesSalons() {
       { event: "INSERT", schema: "public", table: "messages" },
       ({ new: message }) => {
         const estAilleurs = message.channel_id !== currentChannelId;
-        const salonConnu = conversations.some((c) => c.id === message.channel_id);
+        const salonConnu = conversations.some(
+          (c) => c.id === message.channel_id,
+        );
         if (estAilleurs && salonConnu && message.user_id !== user.id) {
-          nonLus.set(message.channel_id, (nonLus.get(message.channel_id) ?? 0) + 1);
+          nonLus.set(
+            message.channel_id,
+            (nonLus.get(message.channel_id) ?? 0) + 1,
+          );
           renderConversations();
           notificationSound.currentTime = 0;
           notificationSound.play();

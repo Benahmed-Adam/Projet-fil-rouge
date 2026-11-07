@@ -3,24 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="media/icon.ico" />
     <meta
       name="description"
       content="Gérez vos contacts et vos invitations de groupe"
     />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/contact.css" />
-    <title>Contacts</title>
+    <title>Contacts et salons</title>
   </head>
 
   <body>
     <header>
       <nav>
-        <a href="conversation.html">Vers conversation</a>
+        <span class="marque">Messagerie de qualité</span>
+        <a href="conversation.html">Conversations</a>
+        <a href="contact.html" aria-current="page">Contacts</a>
+        <a href="parametre.html">Paramètres</a>
       </nav>
     </header>
 
     <main>
-      <h1>Contacts</h1>
+      <h1>Contacts et salons</h1>
 
       <!-- Demande de contact à partir d'un pseudo -->
       <section class="pleine-largeur">
@@ -53,6 +57,16 @@
         <p class="message" id="mes-contacts-message"></p>
       </section>
 
+      <!-- Salons publics que l'on peut rejoindre -->
+      <section>
+        <h2>Salons publics</h2>
+        <ul id="salons-publics"></ul>
+        <p class="liste-vide" id="salons-publics-vide" hidden>
+          Aucun salon public à rejoindre.
+        </p>
+        <p class="message" id="salons-publics-message"></p>
+      </section>
+
       <section>
         <h2>Demandes de contact reçues</h2>
         <ul id="demandes-recues"></ul>
@@ -71,19 +85,9 @@
         <p class="message" id="demandes-envoyees-message"></p>
       </section>
 
-      <!-- Salons publics que l'on peut rejoindre -->
-      <section>
-        <h2>Salons publics</h2>
-        <ul id="salons-publics"></ul>
-        <p class="liste-vide" id="salons-publics-vide" hidden>
-          Aucun salon public à rejoindre.
-        </p>
-        <p class="message" id="salons-publics-message"></p>
-      </section>
-
       <!-- Invitations à rejoindre un salon -->
       <section>
-        <h2>Liste des invitations reçues</h2>
+        <h2>Invitations reçues</h2>
         <ul id="invitations-recues"></ul>
         <p class="liste-vide" id="invitations-recues-vide" hidden>
           Aucune invitation reçue.
@@ -92,7 +96,7 @@
       </section>
 
       <section>
-        <h2>Liste des invitations envoyées</h2>
+        <h2>Invitations envoyées</h2>
         <ul id="invitations-envoyees"></ul>
         <p class="liste-vide" id="invitations-envoyees-vide" hidden>
           Aucune invitation envoyée.

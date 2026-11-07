@@ -33,7 +33,7 @@ setTimeout(() => {
   if (!lienValide) {
     setMessage(
       message,
-      "Ce lien de réinitialisation est invalide ou a expiré. Demandez un nouveau email depuis la page de connexion.",
+      "Ce lien de réinitialisation est invalide ou a expiré. Demandez un nouvel email depuis la page de connexion.",
       "error",
     );
   }
