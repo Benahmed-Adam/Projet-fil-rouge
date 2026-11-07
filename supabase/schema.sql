@@ -229,6 +229,7 @@ CREATE INDEX "messages_channel_created_idx" ON "public"."messages" USING "btree"
 CREATE UNIQUE INDEX "profiles_username_unique" ON "public"."profiles" USING "btree" ("lower"("username"));
 
 CREATE OR REPLACE TRIGGER "on_channel_created" AFTER INSERT ON "public"."channels" FOR EACH ROW EXECUTE FUNCTION "public"."ajouter_proprietaire"();
+CREATE OR REPLACE TRIGGER "on_auth_user_created" AFTER INSERT ON "auth"."users" FOR EACH ROW EXECUTE FUNCTION "public"."creer_profil"();
 
 ALTER TABLE ONLY "public"."channel_invitations"
     ADD CONSTRAINT "channel_invitations_channel_id_fkey" FOREIGN KEY ("channel_id") REFERENCES "public"."channels"("id") ON DELETE CASCADE;
@@ -339,3 +340,15 @@ ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TAB
 ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLES TO "anon";
 ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLES TO "authenticated";
 ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLES TO "service_role";
+
+INSERT INTO "storage"."buckets" ("id", "name", "public", "file_size_limit", "allowed_mime_types")
+VALUES ('message-images', 'message-images', false, 5242880, ARRAY['image/png', 'image/jpeg', 'image/gif', 'image/webp'])
+ON CONFLICT ("id") DO NOTHING;
+
+CREATE POLICY "voir les images de ses salons" ON "storage"."objects" FOR SELECT TO "authenticated" USING ((("bucket_id" = 'message-images'::"text") AND (EXISTS ( SELECT 1
+   FROM "public"."channel_members" "m"
+  WHERE ((("m"."channel_id")::"text" = ("storage"."foldername"("objects"."name"))[1]) AND ("m"."user_id" = "auth"."uid"()))))));
+CREATE POLICY "envoyer une image dans ses salons" ON "storage"."objects" FOR INSERT TO "authenticated" WITH CHECK ((("bucket_id" = 'message-images'::"text") AND (EXISTS ( SELECT 1
+   FROM "public"."channel_members" "m"
+  WHERE ((("m"."channel_id")::"text" = ("storage"."foldername"("objects"."name"))[1]) AND ("m"."user_id" = "auth"."uid"()))))));
+CREATE POLICY "supprimer ses images" ON "storage"."objects" FOR DELETE TO "authenticated" USING ((("bucket_id" = 'message-images'::"text") AND ("owner_id" = ("auth"."uid"())::"text")));
