@@ -6,16 +6,20 @@ Projet Fil-Rouge du cours 8WEB101 : une messagerie instantanée web pour échang
 
 ## Présentation
 
-Après avoir créé un compte, l'utilisateur peut créer des salons publics ou privés, rejoindre les salons publics, inviter d'autres personnes dans ses salons et discuter en temps réel. Les messages s'affichent avec leur auteur et leur heure d'envoi. Ils acceptent le Markdown et le HTML et peuvent contenir des images.
+Après avoir créé un compte, l'utilisateur peut créer des salons publics ou privés, rejoindre les salons publics, inviter ses contacts dans ses salons et discuter en temps réel. Les messages s'affichent avec leur auteur et leur heure d'envoi. Ils acceptent le Markdown et le HTML et peuvent contenir des images.
 
-### Fonctionnalités
+### Fonctionnalités principales
 
-- Inscription, connexion, réinitialisation du mot de passe, changement de pseudo et suppression du compte
-- Liste des salons : création, salons publics à rejoindre, invitations dans les salons privés
+- Inscription et connexion, avec choix du pseudo à l'inscription
 - Liste de contacts : demandes de contact envoyées et reçues, acceptation, retrait
-- Envoi et réception des messages en temps réel, avec date et heure
-- Envoi d'images
-- Messages sur plusieurs lignes, mis en forme en Markdown
+- Liste des salons : création, salons publics à rejoindre, invitation d'un contact dans un salon privé, quitter ou supprimer un salon
+- Envoi et réception des messages en temps réel
+- Affichage de la date et de l'heure de chaque message
+
+### Fonctionnalités secondaires
+
+- Notification à la réception d'un message : son, et nombre de messages non lus à côté des autres salons
+- Partage d'images
 
 ### Fonctionnalité supplémentaire : personnaliser le salon
 
@@ -31,3 +35,5 @@ Le propriétaire d'un salon peut modifier son nom, ses couleurs (accent, fond, t
 ## Équipe
 
 - Adam Benahmed
+
+Projet réalisé seul.
