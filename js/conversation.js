@@ -153,6 +153,11 @@ function construireContenu(texte) {
     }
   }
 
+  for (const lien of doc.querySelectorAll("a")) {
+    lien.target = "_blank";
+    lien.rel = "noopener noreferrer";
+  }
+
   return [...doc.body.childNodes];
 }
 
