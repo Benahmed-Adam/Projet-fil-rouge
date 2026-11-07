@@ -48,6 +48,7 @@ document
   .addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    const username = document.getElementById("pseudo-inscription").value.trim();
     const email = document.getElementById("email-inscription").value.trim();
     const password = document.getElementById("password-inscription").value;
     const passwordConfirm = document.getElementById(
@@ -72,13 +73,13 @@ document
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: URL_CONVERSATION },
+      options: { emailRedirectTo: URL_CONVERSATION, data: { username } },
     });
 
     setLoading(bouton, false);
 
     if (error) {
-      setMessage(message, error, "error");
+      setMessage(message, error.message, "error");
       return;
     }
 

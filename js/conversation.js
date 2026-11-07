@@ -332,7 +332,7 @@ async function selectConversation(channelId) {
 
   currentChannelId = channel.id;
   conversationName.textContent = channel.name;
-  btnParametresSalon.hidden = !["owner", "admin"].includes(channel.role);
+  btnParametresSalon.hidden = channel.role !== "owner";
   // Tout membre peut inviter
   btnInviter.hidden = false;
   // Le propriétaire ne peut pas quitter son salon, seulement le supprimer

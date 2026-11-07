@@ -53,6 +53,20 @@
         <h2>Inscription</h2>
         <form class="form" id="form-inscription">
           <div>
+            <label for="pseudo-inscription">Pseudo</label>
+            <input
+              type="text"
+              name="username"
+              id="pseudo-inscription"
+              autocomplete="username"
+              minlength="3"
+              maxlength="30"
+              pattern="[A-Za-z0-9_]{3,30}"
+              title="3 à 30 caractères : lettres sans accent, chiffres ou _"
+              required
+            />
+          </div>
+          <div>
             <label for="email-inscription">Email</label>
             <input
               type="email"
