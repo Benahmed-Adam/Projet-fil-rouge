@@ -562,10 +562,16 @@ if (!(await isSessionActive()) || !user) {
     liste.addEventListener("click", onClicListe);
   }
   formAjoutContact.addEventListener("submit", envoyerDemandeContact);
-  await Promise.all([
-    chargerContacts(),
-    chargerSalonsPublics(),
-    chargerInvitationsRecues(),
-    chargerInvitationsEnvoyees(),
-  ]);
+  const chargerTout = () =>
+    Promise.all([
+      chargerContacts(),
+      chargerSalonsPublics(),
+      chargerInvitationsRecues(),
+      chargerInvitationsEnvoyees(),
+    ]);
+  // Au retour sur l'onglet : affiche les demandes et invitations reçues entre-temps
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) chargerTout();
+  });
+  await chargerTout();
 }

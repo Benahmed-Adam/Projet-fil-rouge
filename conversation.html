@@ -27,11 +27,13 @@
         <nav>
           <ul id="conversations-list"></ul>
         </nav>
+        <!-- Replié sur téléphone et tablette pour laisser la place aux messages (voir conversation.js) -->
+        <details id="bloc-nouvelle-conversation" open>
+        <summary>Créer une nouvelle conversation</summary>
         <form
           class="form nouvelle-conversation"
           id="form-nouvelle-conversation"
         >
-          <h3>Créer une nouvelle conversation</h3>
           <label for="nouvelle_conversation_nom">Nom de la conversation</label>
           <input
             type="text"
@@ -55,6 +57,7 @@
           <button type="submit" id="nouvelle_conversation">Créer</button>
           <p class="message" id="nouvelle-conversation-message"></p>
         </form>
+        </details>
       </aside>
 
       <!-- Zone de discussion du salon ouvert -->
@@ -79,6 +82,11 @@
         </div>
         <!-- Messages ajoutés par conversation.js -->
         <ul id="messages-list"></ul>
+        <!-- Affiché seulement quand on n'a aucun salon -->
+        <p id="aucun-salon">
+          Vous n'avez pas encore de conversation. Créez-en une, ou rejoignez un
+          salon public depuis la page <a href="contact.html">Contacts</a>.
+        </p>
 
         <!-- Envoi d'un message : texte, image ou les deux -->
         <form class="form" id="form-nouveau-message">

@@ -57,6 +57,12 @@ const btnFermerInviter = document.getElementById("btn-fermer-inviter");
 const inviterMessage = document.getElementById("inviter-message");
 const PSEUDO_REGEX = /^[A-Za-z0-9_]{3,30}$/;
 
+const blocNouvelleConversation = document.getElementById(
+  "bloc-nouvelle-conversation",
+);
+// Même largeur que le passage en blocs empilés dans conversation.css
+const ecranEtroit = window.matchMedia("(max-width: 1000px)");
+
 const btnQuitterSalon = document.getElementById("btn-quitter-salon");
 const btnSupprimerSalon = document.getElementById("btn-supprimer-salon");
 
@@ -96,6 +102,10 @@ let abonnementMessages = null;
 // Ids des messages déjà affichés : un message envoyé revient aussi par le temps réel
 const messagesAffiches = new Set();
 const pseudos = new Map();
+// Messages arrivés dans les autres salons depuis l'ouverture de la page, par salon
+const nonLus = new Map();
+// Faux si l'utilisateur est remonté lire d'anciens messages : on ne le ramène alors pas en bas
+let suivreBas = true;
 
 // Bucket privé : on demande une URL temporaire (1 h) pour afficher une image, la RLS vérifie qu'on est membre du salon
 async function urlSignee(chemin) {
@@ -153,6 +163,13 @@ function renderConversations() {
     link.href = "#";
     link.textContent = channel.name;
     link.dataset.channelId = channel.id;
+    if (nonLus.has(channel.id)) {
+      const badge = document.createElement("span");
+      badge.className = "badge-non-lus";
+      badge.textContent = nonLus.get(channel.id);
+      badge.setAttribute("aria-label", `${nonLus.get(channel.id)} non lus`);
+      link.append(" ", badge);
+    }
     if (channel.id === currentChannelId) {
       link.setAttribute("aria-current", "true");
     }
@@ -171,6 +188,12 @@ function formaterDate(iso) {
 }
 
 // Ajoute un message en bas de la liste, sauf s'il est déjà affiché
+function descendreSiBesoin() {
+  if (suivreBas) {
+    messagesList.scrollTop = messagesList.scrollHeight;
+  }
+}
+
 function afficherMessage(message) {
   if (messagesAffiches.has(message.id)) return;
   messagesAffiches.add(message.id);
@@ -196,18 +219,16 @@ function afficherMessage(message) {
   const contenu = document.createElement("div");
   contenu.className = "contenu-message";
   contenu.append(...construireContenu(message.content ?? ""));
-  // Une image change la hauteur du message une fois chargée : on reste en bas de la liste
+  // Une image change la hauteur du message une fois chargée
   for (const img of contenu.querySelectorAll("img")) {
-    img.addEventListener("load", () => {
-      messagesList.scrollTop = messagesList.scrollHeight;
-    });
+    img.addEventListener("load", descendreSiBesoin);
   }
   afficherImages(contenu);
 
   article.append(header, contenu);
   li.append(article);
   messagesList.append(li);
-  messagesList.scrollTop = messagesList.scrollHeight;
+  descendreSiBesoin();
 }
 
 // Récupère le pseudo de l'auteur d'un message reçu en temps réel
@@ -225,6 +246,7 @@ async function chargerPseudo(userId) {
 async function loadMessages(channelId) {
   messagesList.replaceChildren();
   messagesAffiches.clear();
+  suivreBas = true;
 
   // Les plus récents d'abord pour la limite, puis remis dans l'ordre chronologique
   const { data, error } = await supabase
@@ -331,6 +353,8 @@ async function selectConversation(channelId) {
   if (!channel) return;
 
   currentChannelId = channel.id;
+  nonLus.delete(channel.id);
+  sectionMessages.classList.remove("sans-salon");
   conversationName.textContent = channel.name;
   btnParametresSalon.hidden = channel.role !== "owner";
   // Tout membre peut inviter
@@ -349,6 +373,7 @@ async function selectConversation(channelId) {
 // Plus aucun salon ouvert : remet la zone de discussion à vide
 function viderConversation() {
   currentChannelId = null;
+  sectionMessages.classList.add("sans-salon");
   if (abonnementMessages) {
     supabase.removeChannel(abonnementMessages);
     abonnementMessages = null;
@@ -366,6 +391,39 @@ function viderConversation() {
   }
   renderConversations();
   appliquerStyle({});
+}
+
+// Écoute tous les salons : messages non lus des autres salons et salon supprimé par son propriétaire
+function ecouterTousLesSalons() {
+  supabase
+    .channel("tous-les-salons")
+    .on(
+      "postgres_changes",
+      { event: "INSERT", schema: "public", table: "messages" },
+      ({ new: message }) => {
+        const estAilleurs = message.channel_id !== currentChannelId;
+        const salonConnu = conversations.some((c) => c.id === message.channel_id);
+        if (estAilleurs && salonConnu && message.user_id !== user.id) {
+          nonLus.set(message.channel_id, (nonLus.get(message.channel_id) ?? 0) + 1);
+          renderConversations();
+        }
+      },
+    )
+    .on(
+      "postgres_changes",
+      { event: "DELETE", schema: "public", table: "channels" },
+      async ({ old: salon }) => {
+        const channel = conversations.find((c) => c.id === salon.id);
+        if (!channel) return;
+        await retirerConversation(salon.id);
+        setMessage(
+          messageFormMessage,
+          `Le salon " ${channel.name} " a été supprimé par son propriétaire.`,
+          "error",
+        );
+      },
+    )
+    .subscribe();
 }
 
 // Retire un salon de la liste et ouvre le suivant
@@ -684,6 +742,8 @@ async function envoyerMessage(e) {
   }
 
   setLoading(boutonMessage, true, "Envoi…");
+  // On doit voir son propre message, même si on était remonté dans la liste
+  suivreBas = true;
 
   try {
     let content = texte;
@@ -853,7 +913,8 @@ async function envoyerInvitation(e) {
 }
 
 // Charge les salons dont on est membre et ouvre le premier
-async function loadConversations() {
+// Récupère les salons dont on est membre ; renvoie false en cas d'erreur
+async function chargerConversations() {
   const { data, error } = await supabase
     .from("channels")
     .select("*, channel_members!inner(user_id, role)")
@@ -866,7 +927,7 @@ async function loadConversations() {
       `Impossible de charger les conversations : ${error.message}`,
       "error",
     );
-    return;
+    return false;
   }
 
   // role : notre rôle dans le salon, pour afficher les bons boutons
@@ -874,6 +935,25 @@ async function loadConversations() {
     ...channel,
     role: channel_members[0]?.role,
   }));
+  return true;
+}
+
+// Au retour sur l'onglet : prend en compte les salons ajoutés, renommés ou disparus entre-temps
+async function actualiserConversations() {
+  if (!(await chargerConversations())) return;
+
+  const salonOuvert = conversations.some((c) => c.id === currentChannelId);
+  if (salonOuvert) {
+    renderConversations();
+  } else if (conversations.length > 0) {
+    await selectConversation(conversations[0].id);
+  } else {
+    viderConversation();
+  }
+}
+
+async function loadConversations() {
+  if (!(await chargerConversations())) return;
   renderConversations();
 
   // conversation.html?salon=<id> (lien depuis la page contacts.html) ouvre ce salon
@@ -882,6 +962,8 @@ async function loadConversations() {
     conversations.find((c) => c.id === salonDemande) ?? conversations[0];
   if (salonAOuvrir) {
     await selectConversation(salonAOuvrir.id);
+  } else {
+    viderConversation();
   }
 }
 
@@ -931,6 +1013,7 @@ async function creerConversation(e) {
     }
 
     formNouvelleConversation.reset();
+    blocNouvelleConversation.open = !ecranEtroit.matches;
     setMessage(
       messageNouvelleConversation,
       `La conversation " ${name} " a été créée.`,
@@ -957,6 +1040,18 @@ function onConversationClick(e) {
 if (!(await isSessionActive()) || !user) {
   window.location.replace("index.html");
 } else {
+  blocNouvelleConversation.open = !ecranEtroit.matches;
+  // Marge de 40 px : être presque en bas compte comme être en bas
+  messagesList.addEventListener("scroll", () => {
+    suivreBas =
+      messagesList.scrollHeight -
+        messagesList.scrollTop -
+        messagesList.clientHeight <
+      40;
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) actualiserConversations();
+  });
   formNouvelleConversation.addEventListener("submit", creerConversation);
   conversationsList.addEventListener("click", onConversationClick);
   formMessage.addEventListener("submit", envoyerMessage);
@@ -981,5 +1076,6 @@ if (!(await isSessionActive()) || !user) {
       if (!boutonMessage.disabled) formMessage.requestSubmit();
     }
   });
+  ecouterTousLesSalons();
   await loadConversations();
 }

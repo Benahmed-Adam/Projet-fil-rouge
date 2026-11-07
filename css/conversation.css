@@ -8,7 +8,7 @@ body {
 
 main {
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 260px minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
   align-items: stretch;
   flex: 1;
@@ -47,8 +47,11 @@ main > aside .nouvelle-conversation {
   margin-top: 18px;
 }
 
-main > aside .nouvelle-conversation h3 {
-  margin-bottom: 0;
+main > aside summary {
+  margin-top: 18px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 main > aside .nouvelle-conversation button {
@@ -125,6 +128,19 @@ main > aside li a {
   color: #333333;
 }
 
+/* Nombre de messages non lus dans un autre salon */
+.badge-non-lus {
+  display: inline-block;
+  min-width: 20px;
+  padding: 0 6px;
+  color: #ffffff;
+  font-size: 13px;
+  line-height: 20px;
+  text-align: center;
+  background: #b00020;
+  border-radius: 10px;
+}
+
 main > aside li a[aria-current],
 main > aside li a:hover {
   color: #111111;
@@ -186,9 +202,30 @@ main > section > .form button:hover,
   filter: brightness(1.2);
 }
 
+/* Texte affiché à la place de la discussion quand on n'a aucun salon */
+#aucun-salon {
+  display: none;
+  margin: 0;
+}
+
+#aucun-salon a {
+  text-decoration: underline;
+}
+
+.sans-salon > #aucun-salon {
+  display: block;
+}
+
+.sans-salon > .entete-salon,
+.sans-salon > ul,
+.sans-salon > .form {
+  display: none;
+}
+
 /* Liste des messages : elle défile seule */
 main > section > ul {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-content: start;
   flex: 1;
   min-height: 0;
@@ -236,6 +273,7 @@ article.message header {
 article.message h2 {
   margin: 0;
   font-size: 16px;
+  overflow-wrap: anywhere;
 }
 
 article.message header p {
@@ -244,7 +282,7 @@ article.message header p {
   opacity: 0.7;
 }
 
-/* .message (style.css) met le texte en gras : on le retire pour que le gras du Markdown reste visible */
+/* .message met le texte en gras : on le retire pour que le gras du Markdown reste visible */
 article.message {
   font-weight: 400;
 }
@@ -280,31 +318,34 @@ article.message {
   font-size: 18px;
 }
 
-.contenu-message a {
+.contenu-message a,
+.contenu-message a:hover {
+  color: inherit;
   text-decoration: underline;
 }
 
 .contenu-message blockquote {
   padding-left: 12px;
-  color: #555555;
-  border-left: 3px solid #cccccc;
+  border-left: 3px solid color-mix(in srgb, currentColor 40%, transparent);
+  opacity: 0.8;
 }
 
 .contenu-message code {
   padding: 1px 5px;
   font-family: Consolas, "Courier New", monospace;
   font-size: 14px;
-  background: #f0f0f0;
+  background: color-mix(in srgb, currentColor 10%, transparent);
 }
 
 .contenu-message pre {
   padding: 10px 12px;
   overflow-x: auto;
-  background: #f0f0f0;
+  background: color-mix(in srgb, currentColor 10%, transparent);
 }
 
 .contenu-message pre code {
   padding: 0;
+  background: none;
 }
 
 .contenu-message table {
@@ -314,7 +355,7 @@ article.message {
 .contenu-message th,
 .contenu-message td {
   padding: 4px 8px;
-  border: 1px solid #d6d6d6;
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
 }
 
 /* Formulaire d'envoi d'un message */
@@ -329,8 +370,15 @@ main > section > .form {
 }
 
 main > section > .form label {
-  grid-column: 1 / 3;
+  grid-column: 1 / -1;
   margin-bottom: -8px;
+}
+
+/* Fond blanc fixe : le rouge et le vert des messages restent lisibles sur tous les thèmes */
+#message-form-message:not(:empty) {
+  grid-column: 1 / -1;
+  padding: 6px 10px;
+  background: #ffffff;
 }
 
 /* S'agrandit à la main, sans cacher toute la liste des messages */
@@ -342,7 +390,8 @@ main > section > .form textarea {
 }
 
 main > section > .form .champ-image {
-  grid-column: 1 / 3;
+  grid-column: 1 / -1;
+  min-width: 0;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -356,15 +405,17 @@ main > section > .form .champ-image label {
 
 main > section > .form .champ-image input[type="file"] {
   flex: 1 1 200px;
+  min-width: 0;
   min-height: 44px;
   padding: 8px 10px;
+  color: #171717;
   font: inherit;
   background: #ffffff;
   border: 1px solid #cccccc;
 }
 
 main > section > .form #apercu-image {
-  grid-column: 1 / 3;
+  grid-column: 1 / -1;
   margin: 0;
 }
 
@@ -377,8 +428,8 @@ main > section > .form #apercu-image img {
 
 main > section > .form #apercu-image figcaption {
   margin-top: 6px;
-  color: #666666;
   font-size: 14px;
+  opacity: 0.7;
 }
 
 /* Images affichées dans un message */
@@ -473,38 +524,109 @@ article.message img {
   border-color: #888888;
 }
 
-/* Téléphone : blocs empilés, la page redéfile et les listes gardent une hauteur maximale */
-@media (max-width: 760px) {
-  body {
-    height: auto;
+/* Téléphone et tablette : blocs empilés dans la hauteur de l'écran, seuls les messages défilent */
+@media (max-width: 1000px) {
+  body > header {
+    min-height: 0;
+    padding: 10px 4%;
   }
 
   main {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    width: 92%;
-    gap: 16px;
-    margin-top: 20px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    width: 96%;
+    max-width: none;
+    gap: 8px;
+    margin-top: 8px;
+    margin-bottom: 8px;
   }
 
+  main > aside {
+    max-height: 50dvh;
+    padding: 10px 12px;
+    overflow-y: auto;
+  }
+
+  main > aside h2 {
+    margin-bottom: 6px;
+    font-size: 15px;
+  }
+
+  main > aside summary {
+    margin-top: 6px;
+    font-size: 14px;
+  }
+
+  /* Salons sur une seule ligne qui défile horizontalement */
   main > aside > nav {
-    max-height: 30vh;
+    flex: none;
+    overflow: visible;
+  }
+
+  main > aside ul {
+    display: flex;
+    padding-bottom: 4px;
+    overflow-x: auto;
+  }
+
+  main > aside li {
+    flex: none;
+  }
+
+  main > aside li a {
+    max-width: 200px;
+    padding: 6px 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    background: #f2f2f2;
+  }
+
+  main > section {
+    padding: 12px;
+  }
+
+  main > section h1 {
+    font-size: 18px;
+  }
+
+  .entete-salon {
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .boutons-salon button {
+    min-height: 34px;
+    padding: 4px 10px;
+    font-size: 14px;
   }
 
   main > section > ul {
-    max-height: 60vh;
+    margin-bottom: 8px;
   }
 
   main > section > ul > li {
     max-width: 90%;
   }
 
-  main > aside {
-    padding: 18px;
+  main > section > .form {
+    gap: 8px;
+    padding: 8px;
+  }
+}
+
+/* Écran peu haut (téléphone à l'horizontale) : la page redéfile pour garder de la place aux messages */
+@media (max-width: 1000px) and (max-height: 560px) {
+  body {
+    height: auto;
   }
 
-  main > aside ul {
-    grid-template-columns: 1fr 1fr 1fr;
+  main {
+    grid-template-rows: auto;
+  }
+
+  main > section > ul {
+    max-height: 60vh;
   }
 }
 
@@ -514,7 +636,12 @@ article.message img {
     grid-template-columns: 1fr;
   }
 
+  /* Le texte d'aide et le bouton suffisent : libellés gardés pour les lecteurs d'écran seulement */
   main > section > .form label {
-    grid-column: 1;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
   }
 }
