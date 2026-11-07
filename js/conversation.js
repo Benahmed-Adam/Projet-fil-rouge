@@ -107,6 +107,8 @@ const nonLus = new Map();
 // Faux si l'utilisateur est remonté lire d'anciens messages : on ne le ramène alors pas en bas
 let suivreBas = true;
 
+const notificationSound = new Audio("media/notification_sound.mp3");
+
 // Bucket privé : on demande une URL temporaire (1 h) pour afficher une image, la RLS vérifie qu'on est membre du salon
 async function urlSignee(chemin) {
   if (!urlsSignees.has(chemin)) {
@@ -406,6 +408,8 @@ function ecouterTousLesSalons() {
         if (estAilleurs && salonConnu && message.user_id !== user.id) {
           nonLus.set(message.channel_id, (nonLus.get(message.channel_id) ?? 0) + 1);
           renderConversations();
+          notificationSound.currentTime = 0;
+          notificationSound.play();
         }
       },
     )
